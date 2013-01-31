@@ -1,0 +1,50 @@
+\name{getWDItoSYB}
+\alias{getWDItoSYB}
+\title{Access to World Bank WDI API}
+\usage{
+  getWDItoSYB(indicator = "SP.POP.0014.TO.ZS", name,
+    startDate = 1960, endDate = format(Sys.Date(), "\%Y"),
+    printURL = FALSE, getMetaData = TRUE,
+    printMetaData = FALSE, saveMetaData = FALSE)
+}
+\arguments{
+  \item{name}{The new name to be used in the column.}
+
+  \item{indicator}{The World Bank official indicator name.}
+
+  \item{startDate}{The start date for the data to begin}
+
+  \item{endDate}{The end date.}
+
+  \item{printURL}{Whether the url link for the data should
+  be printed}
+
+  \item{getMetaData}{Whether the data definition and the
+  meta data should be downloaded as well.}
+
+  \item{printMetaData}{logical, print out the meta data
+  information}
+
+  \item{saveMetaData}{logical, whether meta data should be
+  saved as a local csv file}
+}
+\value{
+  A list containing the following elements \describe{
+  \item{data}{The country level data} \item{aggregates}{The
+  aggregates provided by the World Bank}
+  \item{metaData}{The metaData associated with the data}
+  \item{results}{The status of the download, whether
+  success/failed} }
+}
+\description{
+  The function downloads data from the World Bank API.
+}
+\examples{
+pop.df = getWDItoSYB(name = "total_population",
+                     indicator = "SP.POP.TOTL")
+}
+\seealso{
+  \code{\link{getWDI}}, \code{\link{getFAO}},
+  \code{\link{getFAOtoSYB}}
+}
+
