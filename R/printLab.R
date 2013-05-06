@@ -7,7 +7,7 @@
 ##' @param span Whether the dash should span the whole width of the
 ##' screen(80 characters)
 ##' @param width The width of the screen.
-##'
+##' @export
 ##' @return The formatted print
 
 ## TODO (Michael): Need to wrap the label

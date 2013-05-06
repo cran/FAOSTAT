@@ -2,9 +2,10 @@
 \alias{getFAOtoSYB}
 \title{Access to FAO FAOSTAT API}
 \usage{
-  getFAOtoSYB(name, domainCode = "RL", elementCode = 5110,
-    itemCode = 6621, query, printURL = FALSE,
-    productionDB = FALSE)
+  getFAOtoSYB(name = NULL, domainCode = "RL",
+    elementCode = 5110, itemCode = 6621, query,
+    printURL = FALSE, productionDB = FALSE, useCHMT = TRUE,
+    outputFormat = c("wide", "long"))
 }
 \arguments{
   \item{name}{The name to be given to the variable.}
@@ -25,12 +26,19 @@
   be printed}
 
   \item{productionDB}{Use the production data base}
+
+  \item{useCHMT}{logical, whether the CHMT function should
+  be}
+
+  \item{outputFormat}{The format of the data, can be 'long'
+  or 'wide'. appied to avoid double counting of China.}
 }
 \value{
   A list containing the following elements \describe{
-  \item{data}{The country level data} \item{aggregates}{The
-  aggregates provided by the FAO} \item{results}{The status
-  of the download, whether success/failed} }
+  \item{entity}{The entity level data}
+  \item{aggregates}{The aggregates provided by the FAO}
+  \item{results}{The status of the download, whether
+  success/failed} }
 }
 \description{
   A wrapper function using getFAO() to obtain and process
@@ -38,7 +46,7 @@
 }
 \examples{
 ## The default option is the arable land area
-arlLand.df = getFAOtoSYB()
+arlLand.lst = getFAOtoSYB()
 }
 \seealso{
   \code{\link{getWDI}}, \code{\link{getFAO}},

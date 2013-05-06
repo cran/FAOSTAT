@@ -2,12 +2,12 @@
 \alias{chConstruct}
 \title{Construct year to year change}
 \usage{
-  chConstruct(var, country = "FAOST_CODE", year = "Year",
-    data, newVarName = NA, n = 1)
+  chConstruct(data, origVar, country = "FAOST_CODE",
+    year = "Year", newVarName = NA, n = 1)
 }
 \arguments{
-  \item{var}{The variable in which the year to year change
-  is to be calculated}
+  \item{origVar}{The variable in which the year to year
+  change is to be calculated}
 
   \item{country}{The column representing the index of
   country.}

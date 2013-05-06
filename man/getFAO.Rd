@@ -2,9 +2,10 @@
 \alias{getFAO}
 \title{Access to FAO FAOSTAT API}
 \usage{
-  getFAO(name = "arableLand", domainCode = "RL",
+  getFAO(name = NULL, domainCode = "RL",
     elementCode = 5110, itemCode = 6621, query,
-    printURL = FALSE, productionDB = FALSE)
+    printURL = FALSE, productionDB = FALSE, useCHMT = TRUE,
+    outputFormat = "wide")
 }
 \arguments{
   \item{name}{The name to be given to the variable.}
@@ -23,6 +24,12 @@
 
   \item{productionDB}{Access to the production database,
   defaulted to public}
+
+  \item{useCHMT}{logical, whether the CHMT function should
+  be applied to avoid double counting of China.}
+
+  \item{outputFormat}{The format of the data, can be 'long'
+  or 'wide'.}
 }
 \value{
   Outputs a data frame containing the specified data
@@ -37,7 +44,8 @@
   Add date range in to argument
 }
 \examples{
-getFAO()
+## The default option is the arable land area.
+arlLand.df = getFAO()
 }
 \seealso{
   \code{\link{getWDI}}, \code{\link{getWDItoSYB}},

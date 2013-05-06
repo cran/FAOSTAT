@@ -2,11 +2,14 @@
 \alias{getWDI}
 \title{Access to World Bank WDI API}
 \usage{
-  getWDI(indicator = "SP.POP.TOTL", startDate = 1960,
-    endDate = format(Sys.Date(), "\%Y"), printURL = FALSE)
+  getWDI(indicator = "SP.POP.TOTL", name = NULL,
+    startDate = 1960, endDate = format(Sys.Date(), "\%Y"),
+    printURL = FALSE, outputFormat = "wide")
 }
 \arguments{
   \item{indicator}{The World Bank official indicator name.}
+
+  \item{name}{The new name to be used in the column.}
 
   \item{startDate}{The start date for the data to begin}
 
@@ -14,6 +17,9 @@
 
   \item{printURL}{Whether the url link for the data should
   be printed}
+
+  \item{outputFormat}{The format of the data, can be 'long'
+  or 'wide'.}
 }
 \value{
   A data frame containing the desired World Bank Indicator

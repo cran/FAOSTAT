@@ -62,6 +62,7 @@
 ## NOTE(Michael): if there is NA in the weight, then it is replaced
 ##                with zero.
 
+
 aggRegion = function(aggVar, weightVar = rep(NA, length(aggVar)),
     year = "Year", data,
     relationDF = FAOcountryProfile[, c("FAOST_CODE", "UNSD_MACRO_REG_CODE")],
@@ -101,8 +102,11 @@ aggRegion = function(aggVar, weightVar = rep(NA, length(aggVar)),
     weightVar[is.na(weightVar)] = "equalWeight"
 
     if(keepUnspecified){
+        ## Check the unspecified code and the outputcode
+        if(typeof(relationDF[, "outCode"]) != typeof(unspecifiedCode))
+            stop("The type of output code and unspecified code need to be the same")
         Unspecified = raw.dt[is.na(outCode), inCode]
-        raw.dt[is.na(outCode), outCode := as.integer(unspecifiedCode)]
+        raw.dt[is.na(outCode), outCode := unspecifiedCode]
     } else {
         raw.dt = subset(raw.dt, !is.na(outCode))
     }
@@ -162,11 +166,16 @@ aggRegion = function(aggVar, weightVar = rep(NA, length(aggVar)),
         final = merge(x = final, y = base, all.x = TRUE)
         setTxtProgressBar(pb, i)
     }
+    close(pb)
     setnames(final, "outCode", outCode)
     if (keepUnspecified) {
         cat(paste("\nThe following territories have been aggregated into code = ",
                   unspecifiedCode, ":\n", sep = ""))
         print(unique(Unspecified))
+    } else{
+        cat("\n")
     }
     data.frame(final)
 }
+
+utils::globalVariables(names = c("nc", "Year", "V1"))

@@ -13,6 +13,9 @@
 ##' @param query The object created if using the FAOsearch function
 ##' @param printURL Whether the url link for the data should be printed
 ##' @param productionDB Access to the production database, defaulted to public
+##' @param useCHMT logical, whether the CHMT function should be
+##' applied to avoid double counting of China.
+##' @param outputFormat The format of the data, can be 'long' or 'wide'.
 ##' @return Outputs a data frame containing the specified data
 ##' @export
 ##'
@@ -20,23 +23,36 @@
 ##' \code{\link{getFAOtoSYB}}, \code{\link{FAOsearch}}
 ##'
 ##' @examples
-##' getFAO()
+##' ## The default option is the arable land area.
+##' arlLand.df = getFAO()
 
 ## NOTE(Michael): Maybe change input from csv to json.
 
-getFAO = function(name = "arableLand", domainCode = "RL", elementCode = 5110,
-                  itemCode = 6621, query, printURL = FALSE, productionDB = FALSE){
+getFAO = function(name = NULL, domainCode = "RL", elementCode = 5110,
+                  itemCode = 6621, query, printURL = FALSE, productionDB = FALSE,
+                  useCHMT = TRUE, outputFormat = "wide"){
     if(!missing(query)){
         if(NROW(query) > 1)
             stop("Use 'getFAOtoSYB' for batch download")
         domainCode = query$domainCode
         itemCode = query$itemCode
         elementCode = query$elementCode
-        name  = query$name
+        if(is.null(query$name)){
+            name = with(query, paste(domainCode, itemCode, elementCode, sep = "_"))
+        } else {
+            name = query$name
+        }
     }
 
+    if(is.null(name))
+        name = paste(domainCode, itemCode, elementCode, sep = "_")
+
     if(productionDB){
-        base = "http://ldvapp07.fao.org:8030/wds/api?"
+        ## base = "http://ldvapp07.fao.org:8030/wds/api?"
+
+        ## changed by FILIPPO new repository
+        base = "http://lprapp16.fao.org:4012/wds/api?"
+
         database = "db=faostatprod&"
         selection = "select=D.AreaCode[FAOST_CODE],D.Year[Year],D.Value[Value],&from=data[D],element[E]&"
         condition = paste("where=D.elementcode(", elementCode, "),D.itemcode(",
@@ -55,12 +71,23 @@ getFAO = function(name = "arableLand", domainCode = "RL", elementCode = 5110,
     url = paste(base, out, database, selection, condition, join, sep = "")
     if(printURL) print(url)
 
-    dat = read.csv(file = url, stringsAsFactors = FALSE)
-    ## while(inherits(dat, "try-error")){
-    ##   dat = try(read.csv(url, stringsAsFactors = FALSE))
+    faoData = read.csv(file = url, stringsAsFactors = FALSE)
+    ## while(inherits(faoData, "try-error")){
+    ##   faoData = try(read.csv(url, stringsAsFactors = FALSE))
     ## }
-    dat$FAOST_CODE = as.integer(dat$FAOST_CODE)
-    dat$Year = as.integer(dat$Year)
-    colnames(dat)[colnames(dat) == "Value"] = name
-    arrange(df = dat, FAOST_CODE, Year)
+    faoData$FAOST_CODE = as.integer(faoData$FAOST_CODE)
+    faoData$Year = as.integer(faoData$Year)
+
+    if(useCHMT)
+        faoData = CHMT(var = "Value", data = faoData, year = "Year")
+
+    if(outputFormat == "long" & !empty(faoData)){
+        faoData$domainCode = domainCode
+        faoData$itemCode = itemCode
+        faoData$elementCode = elementCode
+        faoData$name = name
+    } else if(outputFormat == "wide"){
+        colnames(faoData)[colnames(faoData) == "Value"] = name
+    }
+    faoData
 }

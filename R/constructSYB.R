@@ -30,7 +30,6 @@
 constructSYB = function(data, origVar1, origVar2, newVarName = NA,
     constructType = c("share", "growth", "change", "index"),
     grFreq = 1, grType = c("ls", "geo"), baseYear = 2000){
-    grType = match.arg(grType)
     ## The length of the variables must be the same
     checkDim = try(data.frame(origVar1, origVar2, newVarName,
         constructType, grFreq, baseYear))
@@ -47,17 +46,21 @@ constructSYB = function(data, origVar1, origVar2, newVarName = NA,
         if(origVar1[i] %in% colnames(data) &&
            (origVar2[i] %in% colnames(data) || is.na(origVar2[i]))){
             switch(constructType[i],
-                   share = {tmp = try(shConstruct(data, totVar = origVar2[i],
+                   share = {tmp = try(shConstruct(data = data,
+                                totVar = origVar2[i],
                                 shareVar = origVar1[i],
                                 newVarName = newVarName[i]), silent = TRUE)},
-                   growth = {tmp = try(grConstruct(data, origVar1[i],
+                   growth = {tmp = try(grConstruct(data = data,
+                                 origVar = origVar1[i],
                                  newVarName = newVarName[i],
                                  type = grType[i], n = grFreq[i]),
                                  silent = TRUE)},
-                   change = {tmp = try(chConstruct(data, origVar1[i],
+                   change = {tmp = try(chConstruct(data = data,
+                                 origVar = origVar1[i],
                                  newVarName = newVarName[i],
                                  n = grFreq[i]), silent = TRUE)},
-                   index = {tmp = try(indConstruct(data, origVar1[i],
+                   index = {tmp = try(indConstruct(data = data,
+                                origVar = origVar1[i],
                                 newVarName = newVarName[i],
                                 baseYear = baseYear), silent = TRUE)}
                    )
@@ -65,6 +68,7 @@ constructSYB = function(data, origVar1, origVar2, newVarName = NA,
             ## this case we will replace them with missing value for unknown
             ## information. Since Inf will usually cause problem in
             ## computation.
+            print(str(tmp))
             tmp[(is.nan(tmp[, 3]) | (tmp[, 3] == Inf)) &
                 !is.na(tmp[, 3]), 3] = NA
             if(!(inherits(tmp, "try-error"))){

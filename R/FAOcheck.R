@@ -31,7 +31,7 @@ FAOcheck = function(var, year = "Year", data, type = c("overlap", "multiChina"))
         cat("\nNOTE: It is common for data reported by the predecessor\n or the new transitional country to include the new country\n")
     }
     if("multiChina" %in% type){
-        printLab("Checkfor existence of multiple China")
+        printLab("Check for existence of multiple China")
         data = CHMT(var = var, data = data, year = year)
     }
     data

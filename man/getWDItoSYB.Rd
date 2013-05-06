@@ -2,10 +2,11 @@
 \alias{getWDItoSYB}
 \title{Access to World Bank WDI API}
 \usage{
-  getWDItoSYB(indicator = "SP.POP.0014.TO.ZS", name,
+  getWDItoSYB(indicator = "SP.POP.0014.TO.ZS", name = NULL,
     startDate = 1960, endDate = format(Sys.Date(), "\%Y"),
     printURL = FALSE, getMetaData = TRUE,
-    printMetaData = FALSE, saveMetaData = FALSE)
+    printMetaData = FALSE, saveMetaData = FALSE,
+    outputFormat = c("wide", "long"))
 }
 \arguments{
   \item{name}{The new name to be used in the column.}
@@ -27,6 +28,9 @@
 
   \item{saveMetaData}{logical, whether meta data should be
   saved as a local csv file}
+
+  \item{outputFormat}{The format of the data, can be 'long'
+  or 'wide'.}
 }
 \value{
   A list containing the following elements \describe{

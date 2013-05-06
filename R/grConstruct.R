@@ -29,7 +29,7 @@ grConstruct = function(data, origVar, newVarName = NA,
   grVar = double()
   if(type == "ls"){
     for(i in 1:length(unqCountry)){
-      tmpgr = 
+      tmpgr =
         lsgr(as.numeric(unlist(subset(tmp,
                                       select = origVar,
                                       subset = FAOST_CODE == unqCountry[i]))), n)
@@ -60,3 +60,5 @@ grConstruct = function(data, origVar, newVarName = NA,
                                newVarName)
   gr.df
 }
+
+utils::globalVariables(names = "FAOST_CODE")

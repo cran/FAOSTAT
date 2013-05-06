@@ -2,7 +2,7 @@
 ##'
 ##' A function for constructing year to year change
 ##'
-##' @param var The variable in which the year to year change is to
+##' @param origVar The variable in which the year to year change is to
 ##' be calculated
 ##' @param country The column representing the index of country.
 ##' @param year The column represing the index of year.
@@ -14,8 +14,8 @@
 ##' rate.
 ##' @export
 
-chConstruct = function(var, country = "FAOST_CODE", year = "Year",
-    data, newVarName = NA, n = 1){
+chConstruct = function(data, origVar, country = "FAOST_CODE", year = "Year",
+    newVarName = NA, n = 1){
   tmp = arrange(subset(data, select = c(country, year, origVar)),
                  get(country), get(year))
   unqCountry = unique(tmp[, country])

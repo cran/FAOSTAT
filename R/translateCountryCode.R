@@ -10,24 +10,50 @@
 ##' @export
 ##'
 
-translateCountryCode = function(data, from, to, oldCode){
-    warning("Please make sure that the country are matched according to their definition")
-    if(missing(oldCode))
+
+translateCountryCode = function (data, from, to, oldCode)
+{
+    cat("\nNOTE: Please make sure that the country are matched according to their definition\n\n")
+    if (missing(oldCode))
         oldCode = from
-    if(from != to){
-        codeTrans = FAOcountryProfile[which(FAOcountryProfile[, from] %in%
-        data[, oldCode]), c(from, to, "OFFICIAL_FAO_NAME")]
+    if (from != to) {
+        codeTrans = FAOcountryProfile[which(FAOcountryProfile[,
+            from] %in% data[, oldCode]), c(from, to)]
         trans.df = merge(x = codeTrans, y = data, by.x = from,
             by.y = oldCode, all.y = TRUE)
-        if(any(is.na(trans.df[, to]))){
+        if (any(is.na(trans.df[, to]))) {
             warning(paste("The following entries does not have '",
-                          to, "' available", sep = ""))
-            print(unique(trans.df[is.na(trans.df[, to]),
-                                  c(from, to, "OFFICIAL_FAO_NAME")]))
+                to, "' available\n", sep = ""), immediate. = TRUE)
+            print(FAOcountryProfile[FAOcountryProfile[, from] %in%
+                                    trans.df[is.na(trans.df[, to]), from],
+                                    c(from, to, "OFFICIAL_FAO_NAME")])
         }
         trans.df$OFFICIAL_FAO_NAME = NULL
-    } else {
+    }
+    else {
         trans.df = data
     }
     trans.df
 }
+
+## translateCountryCode = function(data, from, to, oldCode){
+##     warning("Please make sure that the country are matched according to their definition")
+##     if(missing(oldCode))
+##         oldCode = from
+##     if(from != to){
+##         codeTrans = FAOcountryProfile[which(FAOcountryProfile[, from] %in%
+##         data[, oldCode]), c(from, to, "OFFICIAL_FAO_NAME")]
+##         trans.df = merge(x = codeTrans, y = data, by.x = from,
+##             by.y = oldCode, all.y = TRUE)
+##         if(any(is.na(trans.df[, to]))){
+##             warning(paste("The following entries does not have '",
+##                           to, "' available", sep = ""))
+##             print(unique(trans.df[is.na(trans.df[, to]),
+##                                   c(from, to, "OFFICIAL_FAO_NAME")]))
+##         }
+##         trans.df$OFFICIAL_FAO_NAME = NULL
+##     } else {
+##         trans.df = data
+##     }
+##     trans.df
+## }
