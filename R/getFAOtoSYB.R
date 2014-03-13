@@ -13,6 +13,8 @@
 ##' @param useCHMT logical, whether the CHMT function should be
 ##' @param outputFormat The format of the data, can be 'long' or 'wide'.
 ##' appied to avoid double counting of China.
+##' @param returnFlags, Logical, whether the flags should be
+##' returned. Only work with outputFormat long. 
 ##'
 ##' @return A list containing the following elements
 ##' \describe{
@@ -29,11 +31,13 @@
 ##' ## arlLand.lst = getFAOtoSYB()
 
 getFAOtoSYB = function(name = NULL, domainCode = "RL",
-                       elementCode = 5110, itemCode = 6621, query,
-                       printURL = FALSE, productionDB = FALSE,
-                       useCHMT = TRUE, outputFormat = c("wide", "long")){
+    elementCode = 5110, itemCode = 6621, query, printURL = FALSE,
+    productionDB = FALSE, useCHMT = TRUE,
+    outputFormat = c("wide", "long"), returnFlags = FALSE){
     outputFormat = match.arg(outputFormat)
-
+    if(returnFlags)
+        outputFormat = "long"
+    
     if(!missing(query)){
         domainCode = query$domainCode
         itemCode = query$itemCode
@@ -51,7 +55,7 @@ getFAOtoSYB = function(name = NULL, domainCode = "RL",
     if(any(length(domainCode) != n, length(elementCode) != n,
            length(itemCode) != n))
         stop("length of inputs are not all the same, check the number of names")
-
+    
     faoData = data.frame(FAOST_CODE = integer(),
         Year = integer(), stringsAsFactors = FALSE)
     results = data.frame(Name = name, Success = logical(length(name)),
@@ -59,7 +63,7 @@ getFAOtoSYB = function(name = NULL, domainCode = "RL",
                          Time = as.POSIXct(rep(NA, length(name))),
                          stringsAsFactors = FALSE)
     printLab(paste("FAOSTAT Data Download (", n, " in Total)", sep = ""))
-
+    
     i = 1
     retry = 1
     while(i <= n){
@@ -76,7 +80,8 @@ getFAOtoSYB = function(name = NULL, domainCode = "RL",
                              elementCode = elementCode[i],
                              itemCode = itemCode[i], printURL = printURL,
                              productionDB = productionDB,
-                             useCHMT = useCHMT, outputFormat = outputFormat))
+                             useCHMT = useCHMT, outputFormat = outputFormat,
+                             returnFlags = returnFlags))
             if(!inherits(tmp, "try-error")){
                 ## This was to account sometimes the download is successful, yet
                 ## the data frame is empty
