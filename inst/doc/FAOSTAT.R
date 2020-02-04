@@ -2,7 +2,7 @@
 library("knitr")
 opts_chunk$set(fig.path='figure/', fig.align='center', fig.show='hold',
                warning=FALSE, message=FALSE, tidy=FALSE, results='hide',
-               eval=FALSE)
+               eval=FALSE, concordance=TRUE)
 options(replace.assign=TRUE,width=80)
 
 ## ----Install the FAOSTAT package - CRAN---------------------------------------
@@ -26,7 +26,7 @@ options(replace.assign=TRUE,width=80)
 #  ## Use the result of the search to download the data.
 #  test = getFAO(query = .LastSearch)
 
-## ----FAO-download-------------------------------------------------------------
+## ----FAO-download, eval=FALSE-------------------------------------------------
 #  ## A demonstration query
 #  FAOquery.df = data.frame(varName = c("arableLand", "cerealExp", "cerealProd"),
 #                           domainCode = c("RL", "TP", "QC"),
@@ -41,18 +41,18 @@ options(replace.assign=TRUE,width=80)
 #                  useCHMT = TRUE, outputFormat = "wide"))
 #  FAO.lst$entity[, "arableLand"] = as.numeric(FAO.lst$entity[, "arableLand"])
 
-## ----FAO-check----------------------------------------------------------------
+## ----FAO-check, eval=FALSE----------------------------------------------------
 #  FAOchecked.df = FAOcheck(var = FAOquery.df$varName, year = "Year",
 #                           data = FAO.lst$entity, type = "multiChina",
 #                           take = "simpleCheck")
 
-## ----WB-download--------------------------------------------------------------
+## ----WB-download, eval=FALSE--------------------------------------------------
 #  ## Download World Bank data and meta-data
 #  WB.lst = getWDItoSYB(indicator = c("SP.POP.TOTL", "NY.GDP.MKTP.CD"),
 #                       name = c("totalPopulation", "GDPUSD"),
 #                       getMetaData = TRUE, printMetaData = TRUE)
 
-## ----fill-countrycode, results='markup'---------------------------------------
+## ----fill-countrycode,  eval=FALSE--------------------------------------------
 #  ## Just a demonstration
 #  Demo = WB.lst$entity[, c("Country", "Year", "totalPopulation")]
 #  demoResult = fillCountryCode(country = "Country", data = Demo,
@@ -61,7 +61,7 @@ options(replace.assign=TRUE,width=80)
 #  ## Countries have not been filled in.
 #  unique(demoResult[is.na(demoResult$ISO2_WB_CODE), "Country"])
 
-## ----translate, warning=TRUE, results='markup'--------------------------------
+## ----translate, warning=TRUE,  eval=FALSE-------------------------------------
 #  ## Countries which are not listed under the ISO2 international standard.
 #  FAO.df = translateCountryCode(data = FAOchecked.df, from = "FAOST_CODE",
 #      to = "ISO2_CODE")
@@ -70,10 +70,10 @@ options(replace.assign=TRUE,width=80)
 #  WB.df = translateCountryCode(data = WB.lst$entity, from = "ISO2_WB_CODE",
 #      to = "UN_CODE")
 
-## ----merge, warning=TRUE, results='markup'------------------------------------
+## ----merge, warning=TRUE,  eval=FALSE-----------------------------------------
 #  merged.df = mergeSYB(FAOchecked.df, WB.lst$entity, outCode = "FAOST_CODE")
 
-## ----Scale to basic unit------------------------------------------------------
+## ----Scale to basic unit, eval=FALSE------------------------------------------
 #  multipliers = data.frame(Variable = c("arableLand", "cerealExp", "cerealProd",
 #                                        "totalPopulation", "GDPUSD"),
 #                           Multipliers = c("thousand", NA, NA, NA, NA),
@@ -82,7 +82,7 @@ options(replace.assign=TRUE,width=80)
 #    as.numeric(translateUnit(multipliers[, "Multipliers"]))
 #  preConstr.df = scaleUnit(merged.df, multipliers)
 
-## ----Construction-------------------------------------------------------------
+## ----Construction, eval=FALSE-------------------------------------------------
 #  con.df = data.frame(STS_ID = c("arableLandPC", "arableLandShareOfTotal",
 #                                 "totalPopulationGeoGR", "totalPopulationLsGR",
 #                                 "totalPopulationInd", "totalPopulationCh"),
@@ -109,7 +109,7 @@ options(replace.assign=TRUE,width=80)
 #                                     grType = GROWTH_TYPE,
 #                                     baseYear = BASE_YEAR))
 
-## ----aggregation--------------------------------------------------------------
+## ----aggregation, eval=FALSE--------------------------------------------------
 #  ## Compute aggregates under the FAO continental region.
 #  relation.df = FAOregionProfile[, c("FAOST_CODE", "UNSD_MACRO_REG")]
 #  

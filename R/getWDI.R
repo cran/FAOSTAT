@@ -2,10 +2,10 @@
 ##'
 ##' A function to extract data from the World Bank API
 ##'
-##' Please refer to \url{http://data.worldbank.org/node/18} for any
+##' Please refer to \url{https://data.worldbank.org/} for any
 ##' difference between the country code system. Further details on World
 ##' Bank classification and methodology are available at
-##' \url{http://data.worldbank.org/}.
+##' \url{https://data.worldbank.org/}.
 ##'
 ##' @param indicator The World Bank official indicator name.
 ##' @param name The new name to be used in the column.

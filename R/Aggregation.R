@@ -33,7 +33,8 @@
 ##' @param keepUnspecified Whether countries with unspecified region
 ##' should be aggregated into an "Unspecified" group or simply
 ##' drop. Default to create the new group.
-##'
+##' @importFrom stats coef lm na.omit weighted.mean
+##' @importFrom utils download.file read.csv setTxtProgressBar str txtProgressBar write.csv
 ##' @export
 ##' @examples
 ##' ## example.df = data.frame(FAOST_CODE = rep(c(1, 2, 3), 2),

@@ -1,5 +1,6 @@
 %\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{Download and harmonize FAOSTAT and WDI data: the FAOSTAT package}
+%\VignetteEncoding{UTF-8}
 %% LaTeX packages and LaTeX
 \documentclass[nojss]{jss}
 \usepackage{url}
@@ -49,12 +50,17 @@
 %% Fax: +43/512/507-2851
 
 \begin{document}
+%% Remove the concordance option otherwise you will get the error
+%% "creating vignettes ... ERROR"
+%% "--- re-building ‘FAOSTAT.Rnw’ using knitr"
+%% "It seems you are using the Sweave-specific syntax in line(s) 52;"
+
 
 <<setup, include=FALSE, cache=FALSE>>=
 library("knitr")
 opts_chunk$set(fig.path='figure/', fig.align='center', fig.show='hold',
                warning=FALSE, message=FALSE, tidy=FALSE, results='hide',
-               eval=FALSE)
+               eval=FALSE, concordance=TRUE)
 options(replace.assign=TRUE,width=80)
 @
 
@@ -156,7 +162,7 @@ test = getFAO(query = .LastSearch)
 
 The \code{getFAOtoSYB} is a wrapper for the \code{getFAO} to batch download data, it supports error recovery and stores the status of the download. The function also splits the data downloaded into entity level and regional aggregates, saving time for the user. Query results from \code{FAOsearch} can also be used.
 
-<<FAO-download>>=
+<<FAO-download, eval=FALSE>>=
 ## A demonstration query
 FAOquery.df = data.frame(varName = c("arableLand", "cerealExp", "cerealProd"),
                          domainCode = c("RL", "TP", "QC"),
@@ -176,7 +182,7 @@ The object returned is a list of length three, these are entity level data, aggr
 
 In some cases multiple China are provided. In the FAOSTAT database for example, the trade domain provides data on China mainland (faostat country code = 41), Taiwan (faostat country code =  214) and China plus Taiwan (faostat country code = 357). In some other datasets it is also possible to find China plus Taiwan plus Macao plus Hong Kong (faostat country code =  351). The \code{CHMT} function avoids double counting if multiple China are detected by removing the more aggregated entities if detected. The default in \code{getFAOtoSYB} is to use \code{CHMT} when possible. It is important to perform this check before the aggregation step in order to avoid duble counting. This means that not necessarely this operation needs to be done at the data collection stage. This can be done also at a later stage using the \code{FAOcheck} function (or the \code{CHMT} function directly).
 
-<<FAO-check>>=
+<<FAO-check, eval=FALSE>>=
 FAOchecked.df = FAOcheck(var = FAOquery.df$varName, year = "Year", 
                          data = FAO.lst$entity, type = "multiChina", 
                          take = "simpleCheck")
@@ -187,7 +193,7 @@ The World Bank also provides an API where data from the World Bank and various i
 
 The authors are aware of the \pkg{WDI} package, but we have wrote this function before the recent update of the package with additional functionalities. We have plans to integrate with the \pkg{WDI} package to avoid confusion for the users.
 
-<<WB-download>>=
+<<WB-download, eval=FALSE>>=
 ## Download World Bank data and meta-data
 WB.lst = getWDItoSYB(indicator = c("SP.POP.TOTL", "NY.GDP.MKTP.CD"),
                      name = c("totalPopulation", "GDPUSD"),
@@ -203,25 +209,25 @@ Merge is a typical data manipulation step in daily work yet a non-trivial exerci
 
 \begin{itemize}
   \item United Nations M49 country standard [UN\_CODE]\\
-    \url{http://unstats.un.org/unsd/methods/m49/m49.htm}
+    \url{https://unstats.un.org/unsd/methods/m49/m49.htm/}
   \item FAO country code scheme [FAOST\_CODE]\\
-    \url{http://termportal.fao.org/faonocs/appl/}
+    \url{https://termportal.fao.org/faonocs/appl/}
   \item FAO Global Administrative Unit Layers (GAUL).[ADM0\_CODE]
   \item ISO 3166-1 alpha-2 [ISO2\_CODE]\\
-    \url{http://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}
+    \url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}
   \item ISO 3166-1 alpha-2 (World Bank) [ISO2\_WB\_CODE]\\
-    \url{http://data.worldbank.org/node/18}
+    \url{https://data.worldbank.org/}
   \item ISO 3166-1 alpha-3 [ISO3\_CODE]\\
     \url{http://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-3}
   \item ISO 3166-1 alpha-3 (World Bank) [ISO3\_WB\_CODE]\\
-    \url{http://data.worldbank.org/node/18}
+    \url{https://data.worldbank.org/}
 \end{itemize}
 
 Data from any sources employ country classification listed above can be supplied to \code{mergeSYB} in order to obtain a single merged data. However, the column name of the country coding scheme is required to be the same as the name in square bracket, the responsibility of identifying the coding system lies with the user.
 
 Nevertheless, often only the name of the country is provided and thus merge is not possible or inaccurate based on names. We have provided a function to obtain country codes based on the names matched. In order to avoid matching with the wrong code, the function only attempts to fill in countries which have exact match.
 
-<<fill-countrycode, results='markup'>>=
+<<fill-countrycode,  eval=FALSE>>=
 ## Just a demonstration
 Demo = WB.lst$entity[, c("Country", "Year", "totalPopulation")]
 demoResult = fillCountryCode(country = "Country", data = Demo,
@@ -242,7 +248,7 @@ Due to the fact that different organization are bounded by different political a
 \subsection{Representation problem}
 Moreover, the situation is further complicated by disputed territories or economic union such as Kosovo and Belgium-Luxembourg which does not have representation under particular country coding system. 
 
-<<translate, warning=TRUE, results='markup'>>=
+<<translate, warning=TRUE,  eval=FALSE>>=
 ## Countries which are not listed under the ISO2 international standard.
 FAO.df = translateCountryCode(data = FAOchecked.df, from = "FAOST_CODE",
     to = "ISO2_CODE")
@@ -259,7 +265,7 @@ Finally, if historical aggregates are computed then a region composition which d
 
 Given the lack of an internationally recognized standard which incorporates all these properties, we suggests the use of the FAO country standard and region profile shipped with the package which addresses most of these problems.
 
-<<merge, warning=TRUE, results='markup'>>=
+<<merge, warning=TRUE,  eval=FALSE>>=
 merged.df = mergeSYB(FAOchecked.df, WB.lst$entity, outCode = "FAOST_CODE")
 @
 
@@ -267,7 +273,7 @@ merged.df = mergeSYB(FAOchecked.df, WB.lst$entity, outCode = "FAOST_CODE")
 
 The functions \code{translateUnit} and \code{scaleUnit} help the user in scaling the data to the basic unit. The function \code{translateUnit} allows to translate multipliers from character names into numbers and vice versa. This is really useful because multipliers in metadata are usually provided in character names. The function \code{scaleUnit} allows to scale the variables in the dataset using the multipliers provided by the user. It is always important to work with variables in basic units, especially if new variables need to be generated. As a matter of fact, when a large set of new variables need to be generated out of the raw variables, it is already quite difficult to deal with the unit of measurements. For this reason it is better to avoid the multipliers issue a priori by scaling all the raw variables to their basic unit.
 
-<<Scale to basic unit>>=
+<<Scale to basic unit, eval=FALSE>>=
 multipliers = data.frame(Variable = c("arableLand", "cerealExp", "cerealProd", 
                                       "totalPopulation", "GDPUSD"),
                          Multipliers = c("thousand", NA, NA, NA, NA),
@@ -280,7 +286,7 @@ preConstr.df = scaleUnit(merged.df, multipliers)
 \section{Computing growth, and other derivatives}
 The function \code{constructSYB} allows to automatically construct four different types of indicators: shares, growth rates, indeces, and year to year changes through the functios \code{shConstruct}, \code{grConstruct}, \code{lsgr}, \code{geogr}, \code{indConstruct}, \code{chConstruct}, \code{chgr}. There are two types of growth rate shipped with the package, the least squares growth rate and the geometric growth rate. The least squares growth rate is used when the time series is of sufficient length. The default is at least 5 usable observations, however if the time series is sparse and more than 50\% of the data are missing than the robust regression is used.
 
-<<Construction>>=
+<<Construction, eval=FALSE>>=
 con.df = data.frame(STS_ID = c("arableLandPC", "arableLandShareOfTotal",
                                "totalPopulationGeoGR", "totalPopulationLsGR",
                                "totalPopulationInd", "totalPopulationCh"),
@@ -320,7 +326,7 @@ Aggregation is another important step that is commonly overlook. Many things nee
 %     default tolerance is 15.
 % \end{itemize}
 
-<<aggregation>>=
+<<aggregation, eval=FALSE>>=
 ## Compute aggregates under the FAO continental region.
 relation.df = FAOregionProfile[, c("FAOST_CODE", "UNSD_MACRO_REG")]
 
