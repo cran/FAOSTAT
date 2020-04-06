@@ -11,11 +11,11 @@
 \setcounter{tocdepth}{2}
 \usepackage{breakurl}
 \usepackage{draftwatermark}
-
 %% Author and Title
 \author{Filippo Gheri \& Michael. C. J. Kao\\ Food and Agriculture Organization \\of
-  the United Nations}
+  the United Nations\\Edited by Paul Rougieux}
 \title{Download and harmonize FAOSTAT and WDI data: the \pkg{FAOSTAT} package}
+%\DraftwatermarkOptions{text=\bfseries DEPRECATED}
 
 %% For pretty printing and a nice hypersummary also set:
 \Plainauthor{Filippo Gheri, Michael. C. J. Kao} %% comma-separated
@@ -24,7 +24,6 @@
 
 %% Abstract and keywords
 \Abstract{
-
   The aim of this document is to introduce the \pkg{FAOSTAT} package developed by the Food and Agricultural Organization of the United Nations. The package serves as an open gate way to FAOSTAT (the FAO extensive library of agricultural statistics) and WDI (World Development Indicators database of World Bank).
 
   Retrieve, harmonize, and process official statistics is a thorny task. This paper will demonstrate how the \pkg{FAOSTAT} can alleviate some of these obstacles providing the possibility of downloading, harmonizing, and processing FAOSTAT and WDI data automatically through \proglang{R}. The use of open source software \proglang{R} brings tremendous amount of benefits, speeding up the production process and open up the data and methodology to the general public. In this small paper we will illustrate the process and demonstrate how the use of the package can increase transparency and sustainability.
@@ -63,6 +62,8 @@ opts_chunk$set(fig.path='figure/', fig.align='center', fig.show='hold',
                eval=FALSE, concordance=TRUE)
 options(replace.assign=TRUE,width=80)
 @
+
+\tableofcontents 
 
 \section{Introduction}
 In 2011 Adam Prakash and Mattieu Stigler in the ESS division of the Food and Agricultural Organization of the United Nations had the idea of utilizing \proglang{R} and \LaTeX{} for the production of the FAO statistical yearbook. The initiative was taken in order to replace the labour intensive work with a streamline system which integrates data extraction, processing, analysis, and dissemination into one single comprehensive system. The \pkg{FAOSTAT} package is one of the first outputs of the new process, and it aims at facilitating the user in downloading, harmonizing, and processing statistics.
@@ -118,9 +119,9 @@ library(FAOSTAT)
 
 The latest version of the package can also be installed from the following github repository:
 
-<<Install the FAOSTAT package - GITHUB>>=
+<<Install the FAOSTAT package - git repo>>=
 if(!is.element("FAOSTAT", .packages(all.available = TRUE)))
-   install_github(username = "mkao006", repo = "FAOSTATpackage", ref = "master", subdir = "FAOSTAT")
+    remotes::install_gitlab(repo="paulrougieux/faostatpackage/FAOSTAT")
 library(FAOSTAT)
 @
 
@@ -134,8 +135,45 @@ vignette("FAOSTAT", package = "FAOSTAT")
 \section{Data collection}
 \subsection{Download data from FAOSTAT}
 
-FAOSTAT is the largest agricultural database in the world. It contains data from land productivity to agricultural production and trade dating back from 1960 to the most recent available data. Detailed information on meta data, methods and standards can be found on the official website of FAOSTAT (\url{http://faostat3.fao.org/}) and the Statistics Division (ESS) (\url{http://www.fao.org/economic/ess/en/}).
+FAOSTAT is the largest agricultural database in the world. It contains data from land productivity to agricultural production and trade dating back from 1960 to the most recent available data. Detailed information on meta data, methods and standards can be found on the official website of FAOSTAT (\url{http://www.fao.org/faostat/en/#data}) and the Statistics Division (ESS) (\url{http://www.fao.org/economic/ess/en/}).
 
+\subsubsection{Load data from the bulk download repository}
+
+Explore the FAOSTAT website to find out the data you are interested in
+\url{http://www.fao.org/faostat/en/#data}
+Copy a "bulk download" url,
+for example they are located in the right menu on the "crops" page:
+\url{http://www.fao.org/faostat/en/#data/QC}.
+
+In this example, 
+the url is split in two parts: a common part \verb|'url_bulk_site'| and a .zip file name part.
+In practice you can enter the full url directly as the \verb|`url_bulk`|  argument.
+Notice also that I have choosen to load global data in long format (normalized).
+<<>>=
+url_bulk_site <- "http://fenixservices.fao.org/faostat/static/bulkdownloads"
+url_crops <- file.path(url_bulk_site, "Production_Crops_E_All_Data_(Normalized).zip")
+url_forestry <- file.path(url_bulk_site, "Forestry_E_All_Data_(Normalized).zip")
+
+
+# Create a folder to store the data
+data_folder <- "data_raw"
+dir.create(data_folder)
+
+# Download the files
+download_faostat_bulk(url_bulk = url_forestry, data_folder = data_folder)
+download_faostat_bulk(url_bulk = url_crops, data_folder = data_folder)
+
+# Read the files and assign them to data frames 
+production_crops <- read_faostat_bulk("data_raw/Production_Crops_E_All_Data_(Normalized).zip")
+forestry <- read_faostat_bulk("data_raw/Forestry_E_All_Data_(Normalized).zip")
+ 
+# Save the data frame in the serialized RDS format for fast reuse later.
+saveRDS(production_crops, "data_raw/production_crops_e_all_data.rds")
+saveRDS(forestry,"data_raw/forestry_e_all_data.rds")
+@
+
+
+\subsubsection{Load data through the FAOSTAT API  (this method is deprecated since 2017)}
 In order to access to an indicator in FAOSTAT using the API, three pieces of information need to be provided: domain, item, and element codes. They are defined as:
 
 \begin{itemize}

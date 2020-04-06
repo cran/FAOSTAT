@@ -1,4 +1,4 @@
-6c379895697760b1e0f673d3d36e4b84 *DESCRIPTION
+36f16f3da3a9276dd7c0b439fdd12a9e *DESCRIPTION
 53e70802bcd7ab617513e7806702955b *NAMESPACE
 be83f5070c20f2363ba3c138b45c90e0 *R/Aggregation.R
 8e87389a02f46129380aabb302ee0055 *R/CHMT.R
@@ -12,7 +12,7 @@ bfb92cc4a93b8f4eb4a538df882da3b6 *R/FAOsearch.R
 0911be25d0cbcb57496f62c42f8c10c1 *R/chgr.R
 89c2dcbf429d07bd7e27664836734af0 *R/constructSYB.R
 bd20625c590b7a508e343c8746812926 *R/ebind.R
-2d90c7a33982617dee02bbf13be3f233 *R/faostat_bulk_download.R
+c67af4f38bed0b8d23afe0f61e96ef0f *R/faostat_bulk_download.R
 21b77fd456899d9ab79682371f7db29b *R/fillCountryCode.R
 1877c4734485511282e67f4ed20af82b *R/geogr.R
 abb335c9fabe8b544601aa4194689bb9 *R/getFAO.R
@@ -36,9 +36,9 @@ a5fb6adf38b4c6b4f74338e0d7e263dc *R/translateCountryCode.R
 1903c712a468fd23c72297297b38bd28 *data/FAOregionProfile.RData
 d53d1cf2ddf1206bf39e24c8b05dc52a *demo/00Index
 5f60703ade3ecf2fd61f23d069193ffb *demo/FAOSTATdemo.R
-6c220316159b415a8c64af3096f870e6 *inst/doc/FAOSTAT.R
-0e5366db733232fe6540f122962ff8be *inst/doc/FAOSTAT.Rnw
-36f6675b47dab6dbadfc6a6b8f424abf *inst/doc/FAOSTAT.pdf
+a4339721a7c25c0e8b49051f59227e7b *inst/doc/FAOSTAT.R
+a93c5bf5d1908cf8152b5d2bfd909829 *inst/doc/FAOSTAT.Rnw
+5cd775958f032929281718c50a6a3a42 *inst/doc/FAOSTAT.pdf
 eba60c1871cbda35b4ff2524a30fcd5c *man/Aggregation.Rd
 43d33ac1c29fb746d05a08a2839c9455 *man/CHMT.Rd
 c00fd90a2464d05a83144c7125678cc8 *man/FAOSTAT-package.Rd
@@ -50,7 +50,7 @@ d06b5b88f25cd9cfdb61e67b6ff47f3f *man/FAOsearch.Rd
 72aafa8abad876103a51d40bf490267d *man/chConstruct.Rd
 8a38f0e75ea791726b45f214f760dd75 *man/chgr.Rd
 57644c2e175edffd47addcc40c6a19f0 *man/constructSYB.Rd
-a9a344cf71fb6bfcc1fe9a14d27a4d9f *man/download_faostat_bulk.Rd
+1f8bcc2bc2595e8068f32c367db8e88a *man/download_faostat_bulk.Rd
 34ca303a5a3c0f4791bbe3341c87a8d0 *man/ebind.Rd
 c3b9a84a5dfadf195fa2565fdbba1029 *man/fillCountryCode.Rd
 b05c60c6e1eaca6445423d050b6cb5a8 *man/geogr.Rd
@@ -65,7 +65,6 @@ f6d72a6d52c51a5e8444c45b70a50a15 *man/lsgr.Rd
 1215e97cecc730a4b8cc964aad2f8b50 *man/mergeSYB.Rd
 2893150e4e5e8169cc93323393918d4e *man/overlap.Rd
 54e0f5ee8e49b71687bd01e792edce85 *man/printLab.Rd
-d05f9f43421b26492e9827c08a8aedc6 *man/read_faostat_bulk.Rd
 d4efbeaa2088943e455073f6436743e1 *man/scaleUnit.Rd
 ec62185f73e8e84bff1bfefc1618421f *man/shConstruct.Rd
 e429c82900d082be455dae98c308afbb *man/translateCountryCode.Rd
@@ -73,4 +72,4 @@ e429c82900d082be455dae98c308afbb *man/translateCountryCode.Rd
 29b45398272cb1097494cc866cb5294b *tests/testthat.R
 1dd27edf5f8929b277fb7bb29a42dcfb *tests/testthat/test_geogr.R
 a41434aa7a909201f055f44c9ac7e2bb *vignettes/FAOSTAT-concordance.tex
-0e5366db733232fe6540f122962ff8be *vignettes/FAOSTAT.Rnw
+a93c5bf5d1908cf8152b5d2bfd909829 *vignettes/FAOSTAT.Rnw
