@@ -66,6 +66,7 @@ options(replace.assign=TRUE,width=80)
 \tableofcontents 
 
 \section{Introduction}
+
 In 2011 Adam Prakash and Mattieu Stigler in the ESS division of the Food and Agricultural Organization of the United Nations had the idea of utilizing \proglang{R} and \LaTeX{} for the production of the FAO statistical yearbook. The initiative was taken in order to replace the labour intensive work with a streamline system which integrates data extraction, processing, analysis, and dissemination into one single comprehensive system. The \pkg{FAOSTAT} package is one of the first outputs of the new process, and it aims at facilitating the user in downloading, harmonizing, and processing statistics.
 
 This paper will demonstrate how the \pkg{FAOSTAT} package is used to automatically download data from FAOSTAT and WDI, and to harmonize different data sources under a common country coding system. The goal is to provide a tool that facilitates the data collection from FAOSTAT and WDI, and helps the user in harmonizing different datasets.
@@ -117,7 +118,7 @@ if(!is.element("FAOSTAT", .packages(all.available = TRUE)))
 library(FAOSTAT)
 @
 
-The latest version of the package can also be installed from the following github repository:
+The latest version of the package can also be installed from the following gitlab repository:
 
 <<Install the FAOSTAT package - git repo>>=
 if(!is.element("FAOSTAT", .packages(all.available = TRUE)))
@@ -139,41 +140,39 @@ FAOSTAT is the largest agricultural database in the world. It contains data from
 
 \subsubsection{Load data from the bulk download repository}
 
-Explore the FAOSTAT website to find out the data you are interested in
-\url{http://www.fao.org/faostat/en/#data}
-Copy a "bulk download" url,
-for example they are located in the right menu on the "crops" page:
-\url{http://www.fao.org/faostat/en/#data/QC}.
+A search function \code{FAOsearch} has been provided for the user to identify dataset codes. 
+The metadata returned by \code{FAOsearch} describes more than seventy datasets. Each dataset is identified by a 2 to 4 letter code. 
+Once you have found the dataset code you are interested in, enter it as the code argument to the \code{get_faostat_bulk()} function. 
+That function will load the corresponding data into a data frame as illustrated in the sample code below.
 
-In this example, 
-the url is split in two parts: a common part \verb|'url_bulk_site'| and a .zip file name part.
-In practice you can enter the full url directly as the \verb|`url_bulk`|  argument.
-Notice also that I have choosen to load global data in long format (normalized).
-<<>>=
-url_bulk_site <- "http://fenixservices.fao.org/faostat/static/bulkdownloads"
-url_crops <- file.path(url_bulk_site, "Production_Crops_E_All_Data_(Normalized).zip")
-url_forestry <- file.path(url_bulk_site, "Forestry_E_All_Data_(Normalized).zip")
-
-
+<<FAO-search, eval=FALSE>>=
+library(FAOSTAT)
 # Create a folder to store the data
 data_folder <- "data_raw"
 dir.create(data_folder)
 
-# Download the files
-download_faostat_bulk(url_bulk = url_forestry, data_folder = data_folder)
-download_faostat_bulk(url_bulk = url_crops, data_folder = data_folder)
+# Load information about all datasets into a data frame
+fao_metadata <- FAOsearch()    
 
-# Read the files and assign them to data frames 
-production_crops <- read_faostat_bulk("data_raw/Production_Crops_E_All_Data_(Normalized).zip")
-forestry <- read_faostat_bulk("data_raw/Forestry_E_All_Data_(Normalized).zip")
- 
-# Save the data frame in the serialized RDS format for fast reuse later.
+# Find information about datasets whose titles contain the word "crop" (illustrates the case insensitive search)
+FAOsearch(dataset="crop", full = FALSE)
+
+# Load crop production data
+production_crops <- get_faostat_bulk(code = "QC", data_folder = data_folder)
+# Show the structure of the data
+str(crop_production)
+
+# Cache the file i.e. save the data frame in the serialized RDS format for fast reuse later.
 saveRDS(production_crops, "data_raw/production_crops_e_all_data.rds")
-saveRDS(forestry,"data_raw/forestry_e_all_data.rds")
+# Now you can load your local version of the data from the RDS file
+production_crops <- readRDS("data_raw/production_crops_e_all_data.rds")
 @
 
 
-\subsubsection{Load data through the FAOSTAT API  (this method is deprecated since 2017)}
+\subsubsection{Deprecated - Load data through the FAOSTAT API}
+
+Note: this sub section is deprecated. Left here for historical purposes, as a reminder that the FAOchecked function still doesn't have a replacement as of 2020. 
+
 In order to access to an indicator in FAOSTAT using the API, three pieces of information need to be provided: domain, item, and element codes. They are defined as:
 
 \begin{itemize}
@@ -188,35 +187,7 @@ In order to access to an indicator in FAOSTAT using the API, three pieces of inf
     production/extraction rate.}
 \end{itemize}
 
-An interactive function \code{FAOsearch} has been provided for the user to identify the respective codes. An object \code{.LastSearch} will be assigned after the search and can be used by both the \code{getFAO} and \code{getFAOtoSYB} functions as the sole argument to download the data.
-
-<<FAO-search, eval=FALSE>>=
-## Use the interective function to search the codes.
-FAOsearch()
-
-## Use the result of the search to download the data.
-test = getFAO(query = .LastSearch)
-@
-
 The \code{getFAOtoSYB} is a wrapper for the \code{getFAO} to batch download data, it supports error recovery and stores the status of the download. The function also splits the data downloaded into entity level and regional aggregates, saving time for the user. Query results from \code{FAOsearch} can also be used.
-
-<<FAO-download, eval=FALSE>>=
-## A demonstration query
-FAOquery.df = data.frame(varName = c("arableLand", "cerealExp", "cerealProd"),
-                         domainCode = c("RL", "TP", "QC"),
-                         itemCode = c(6621, 1944, 1717),
-                         elementCode = c(5110, 5922, 5510),
-                         stringsAsFactors = FALSE)
-
-## Download the data from FAOSTAT
-FAO.lst = with(FAOquery.df,
-    getFAOtoSYB(name = varName, domainCode = domainCode,
-                itemCode = itemCode, elementCode = elementCode,
-                useCHMT = TRUE, outputFormat = "wide"))
-FAO.lst$entity[, "arableLand"] = as.numeric(FAO.lst$entity[, "arableLand"])
-@
-
-The object returned is a list of length three, these are entity level data, aggregates and the download status. The function supports both long and wide format.
 
 In some cases multiple China are provided. In the FAOSTAT database for example, the trade domain provides data on China mainland (faostat country code = 41), Taiwan (faostat country code =  214) and China plus Taiwan (faostat country code = 357). In some other datasets it is also possible to find China plus Taiwan plus Macao plus Hong Kong (faostat country code =  351). The \code{CHMT} function avoids double counting if multiple China are detected by removing the more aggregated entities if detected. The default in \code{getFAOtoSYB} is to use \code{CHMT} when possible. It is important to perform this check before the aggregation step in order to avoid duble counting. This means that not necessarely this operation needs to be done at the data collection stage. This can be done also at a later stage using the \code{FAOcheck} function (or the \code{CHMT} function directly).
 
@@ -227,6 +198,7 @@ FAOchecked.df = FAOcheck(var = FAOquery.df$varName, year = "Year",
 @
 
 \subsection{Download data from World Bank}
+
 The World Bank also provides an API where data from the World Bank and various international organization are made public. More information about the data and the API can be found at \url{http://data.worldbank.org/}
 
 The authors are aware of the \pkg{WDI} package, but we have wrote this function before the recent update of the package with additional functionalities. We have plans to integrate with the \pkg{WDI} package to avoid confusion for the users.
@@ -243,6 +215,9 @@ The output is similar to the object generated by \code{getFAOtoSYB} except that 
 One point to note here, it is usually unlikely to reconstruct the world aggregates provided by the World Bank based on the data provided. The reason is that the aggregate contains Taiwan when available, yet the statistics for Taiwan are not published.
 
 \section{Merge data from different sources}
+
+Warning: this section needs to be updated. Contributions and pull requests are welcomed at \url{https://gitlab.com/paulrougieux/faostatpackage/}.
+
 Merge is a typical data manipulation step in daily work yet a non-trivial exercise especially when working with different data sources. The built in \textit{mergeSYB} function enables one to merge data from different sources as long as the country coding system is identified. Currently the following country coding translation are supported and included in the internal data set FAOcountryProfile of the package:
 
 \begin{itemize}
@@ -309,6 +284,8 @@ merged.df = mergeSYB(FAOchecked.df, WB.lst$entity, outCode = "FAOST_CODE")
 
 \section{Scale data to basic unit}
 
+Warning: this section needs to be updated. Contributions and pull requests are welcomed at \url{https://gitlab.com/paulrougieux/faostatpackage/}.
+
 The functions \code{translateUnit} and \code{scaleUnit} help the user in scaling the data to the basic unit. The function \code{translateUnit} allows to translate multipliers from character names into numbers and vice versa. This is really useful because multipliers in metadata are usually provided in character names. The function \code{scaleUnit} allows to scale the variables in the dataset using the multipliers provided by the user. It is always important to work with variables in basic units, especially if new variables need to be generated. As a matter of fact, when a large set of new variables need to be generated out of the raw variables, it is already quite difficult to deal with the unit of measurements. For this reason it is better to avoid the multipliers issue a priori by scaling all the raw variables to their basic unit.
 
 <<Scale to basic unit, eval=FALSE>>=
@@ -322,6 +299,9 @@ preConstr.df = scaleUnit(merged.df, multipliers)
 @
 
 \section{Computing growth, and other derivatives}
+
+Warning: this section needs to be updated. Contributions and pull requests are welcomed at \url{https://gitlab.com/paulrougieux/faostatpackage/}.
+
 The function \code{constructSYB} allows to automatically construct four different types of indicators: shares, growth rates, indeces, and year to year changes through the functios \code{shConstruct}, \code{grConstruct}, \code{lsgr}, \code{geogr}, \code{indConstruct}, \code{chConstruct}, \code{chgr}. There are two types of growth rate shipped with the package, the least squares growth rate and the geometric growth rate. The least squares growth rate is used when the time series is of sufficient length. The default is at least 5 usable observations, however if the time series is sparse and more than 50\% of the data are missing than the robust regression is used.
 
 <<Construction, eval=FALSE>>=
@@ -353,6 +333,9 @@ postConstr.lst = with(con.df,
 @
 
 \section{Compute aggregates}
+
+Warning: this section needs to be updated. Contributions and pull requests are welcomed at \url{https://gitlab.com/paulrougieux/faostatpackage/}.
+
 Aggregation is another important step that is commonly overlook. Many things need to taken into account. Aggregate composition, duplicated values, missing values, aggregation method, and aggregation rules are probably the most important ones. The result can vary due to the differences between the regional composition and the set of countries used. Furthermore, it is complicated by the amount of missing values which can render the aggregates incomparable. Given the missing values and diverging country sets, aggregation can only serve as approximates in order to inform the general situation of the region. The user has the possibility of choosing whether to apply a rule or not. The rule consists in computing the aggregate just if, for each aggregate, the available data represent (in terms of the weighting variable) a share greater than the threshold provided by the user. In case of aggregation method equal to "sum", the same rule is applied considering a weight equals to one for all the countries. 
 
 % \begin{itemize}

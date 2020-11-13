@@ -31,18 +31,28 @@ A data frame containing the desired World Bank Indicator
 }
 \description{
 A function to extract data from the World Bank API
-}
-\details{
+
 Please refer to \url{https://data.worldbank.org/} for any
 difference between the country code system. Further details on World
-Bank classification and methodology are available at
-\url{https://data.worldbank.org/}.
+Bank classification and methodology are available on that website.
+}
+\details{
+Sometime after 2016, there was a change in the api according to 
+\url{https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation}
+"Version 2 (V2) of the Indicators API has been released and replaces V1 of the API. 
+V1 API calls will no longer be supported. To use the V2 API, you must place v2 in the call. 
+For example: \url{http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL}.
+
+Original (2011) source by Markus Gesmann:
+\url{http://lamages.blogspot.it/2011/09/setting-initial-view-of-motion-chart-in.html}
+Also available at 
+\url{https://www.magesblog.com/post/2011-09-25-accessing-and-plotting-world-bank-data/}
 }
 \examples{
 ## pop.df = getWDI()
-
 }
 \seealso{
 \code{\link{getFAO}}, \code{\link{getWDItoSYB}},
-\code{\link{getFAOtoSYB}}
+\code{\link{getFAOtoSYB}} 
+and the wbstats package \url{https://cran.r-project.org/package=wbstats} for an implementation with many more features.
 }

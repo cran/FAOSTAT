@@ -1,107 +1,43 @@
-##' A function to find the domain, element and item code for a
-##' specific FAOSTAT query.
-##'
-##' @export
+#' Search FAOSTAT tables 
+#' 
+#' Get full list of datasets from the FAOSTAT database with the Code, Dataset Name and Topic.
+#' 
+#' @param code character code of the dataset, listed as DatasetCode
+#' @param dataset character name of the dataset (or part of the name), listed as DatasetName in the output data frame
+#' @param topic character topic from list
+#' @param latest boolean sort list by latest updates
+#' @param full boolean, TRUE returns the full table with all columns
+#' @examples 
+#' \dontrun{
+#' # Find information about all datasets
+#' fao_metadata <- FAOsearch()    
+#' # Find information about the forestry dataset
+#' FAOsearch(code="FO")
+#' # Find information about datasets whose titles contain the word "Flows"
+#' FAOsearch(dataset="Flows", full = FALSE)
+#' }
+#' @export
+FAOsearch = function(code = NULL, dataset = NULL, topic = NULL, latest = FALSE, full = TRUE){
 
-FAOsearch = function(){
-    with(FAOmetaTable, {
-        ## Find the Group code
-        gc = NA
-        ## while loop iterates until a valid value is supplied
-        while(length(gc)==0 || is.na(gc)){
-            cat(paste(paste("(", 1:length(groupTable$groupName), ") ",
-                            groupTable$groupName, sep = ""), collapse = "\n"))
-            gcn = readline("\nWhich Group are you looking for: ")
-            gc = groupTable[as.numeric(gcn), "groupCode"]
-        }
+    # Download the latest metadata from Fenix Services (host of FAOSTAT data) 
+    FAOxml <- XML::xmlParse( "http://fenixservices.fao.org/faostat/static/bulkdownloads/datasets_E.xml")
+    metadata <- XML::xmlToDataFrame(FAOxml, stringsAsFactors = FALSE)
 
-        ## Find the Domain code
-        subdomainTable = subset(domainTable, groupCode == gc)
-        dc = NA
-        ## while loop iterates until a valid value is supplied
-        while(length(dc)==0 || is.na(dc)){
-            cat(paste(paste("(", 1:length(subdomainTable$domainName), ") ",
-                            subdomainTable$domainName, sep = ""),
-                      collapse = "\n"))
-            dcn = readline("\nWhich Domain are you looking for: ")
-            dc = subdomainTable[as.numeric(dcn), "domainCode"]
-        }
-
-        ## Individual or aggregated item
-        useAgg = NA
-        while(is.na(useAgg) || !useAgg %in% c("0", "1")){
-            cat("(0) Individual item (e.g. Apples, Wheat)\n")
-            cat("(1) Aggregated item (e.g. Total cereals, Total meat\n")
-            useAgg = readline(paste("Are you looking for individual item or",
-                              "aggregated item:"))
-        }
-
-        if(as.numeric(useAgg)){
-            ## Find the Item Aggregated code
-            subitemTable = subset(itemAggTable, domainCode == dc)
-            ic = NA
-            ## while loop iterates until a valid value is supplied
-            while(length(ic)==0 || is.na(ic)){
-                cat(paste(paste("(", 1:length(subitemTable$itemName), ") ",
-                                subitemTable$itemName, sep = ""),
-                          collapse = "\n"))
-                icn = readline(paste("\nWhich Item are you looking for?",
-                                     "('All' for everything):"))
-                if(icn == "All")
-                    icn = 1:length(subitemTable$itemName)
-                ic = subitemTable[as.numeric(icn), "itemCode"]
-            }
-        } else {
-
-            ## Find the Item code
-            subitemTable = subset(itemTable, domainCode == dc)
-            ic = NA
-            ## while loop iterates until a valid value is supplied
-            while(length(ic)==0 || is.na(ic)){
-                cat(paste(paste("(", 1:length(subitemTable$itemName), ") ",
-                                subitemTable$itemName, sep = ""),
-                          collapse = "\n"))
-                icn = readline(paste("\nWhich Item are you looking for?",
-                                     "('All' for everything): "))
-                if(icn == "All")
-                    icn = 1:length(subitemTable$itemName)
-                ic = subitemTable[as.numeric(icn), "itemCode"]
-            }
-        }
-
-        ## Find the Element code
-        subelementTable = subset(elementTable, domainCode == dc)
-        ec = NA
-        ## while loop iterates until a valid value is supplied
-        while(length(ec)==0 || is.na(ec)){
-            cat(paste(paste("(", 1:length(subelementTable$elementName), ") ",
-                            subelementTable$elementName, sep = ""),
-                      collapse = "\n"))
-            ecn = readline(paste("\nWhich Element are you looking for?",
-                                 "('All' for everything):"))
-            if(ecn == "All")
-                ecn = 1:length(subelementTable$elementName)
-            ec = subelementTable[as.numeric(ecn), "elementCode"]
-        }
-
-        tmp = expand.grid(dc, ic, ec, stringsAsFactors = FALSE)
-        colnames(tmp) = c("domainCode", "itemCode", "elementCode")
-        tmp = merge(tmp, domainTable[, c("domainCode", "domainName")],
-            all.x = TRUE)
-        tmp = merge(tmp, subitemTable[, c("itemCode", "itemName")],
-            all.x = TRUE)
-        final.df = merge(tmp, subelementTable[, c("elementCode", "elementName")],
-            all.x = TRUE)
-        final.df$name =
-            with(final.df, paste(domainName, itemName, elementName, sep = "_"))
-        final.df$domainName = NULL
-        final.df$itemName = NULL
-        final.df$elementName = NULL
-        .LastSearch <<- final.df
-        cat("\n** Search result saved as .LastSearch**\n")
-
-    }
-    )
+    # Rename columns to lowercase
+    names(metadata) <- tolower(gsub("\\.","_",names(metadata)))
+    
+    if(!is.null(code)){
+        metadata <- metadata[code == metadata[,"datasetcode"],]}
+    if(!is.null(dataset)){
+        metadata <- metadata[grep(dataset, metadata[,"datasetname"], ignore.case = TRUE),]}
+    if(!is.null(topic)){
+        metadata <- metadata[grep(topic, metadata[,"topic"], ignore.case = TRUE),]}
+    if(latest == TRUE){
+        metadata <- metadata[order(metadata$DateUpdate, decreasing = TRUE),]}
+    if(full == FALSE){
+        return(metadata[,c("datasetcode", "datasetname", "dateupdate")])}
+    if(full == TRUE){
+        return(metadata)}
+    else(return("Invalid query"))
 }
 
-utils::globalVariables(names = c("FAOmetaTable"))
