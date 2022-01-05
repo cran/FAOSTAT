@@ -18,9 +18,15 @@
 #' }
 #' @export
 FAOsearch = function(code = NULL, dataset = NULL, topic = NULL, latest = FALSE, full = TRUE){
-
     # Download the latest metadata from Fenix Services (host of FAOSTAT data) 
-    FAOxml <- XML::xmlParse( "http://fenixservices.fao.org/faostat/static/bulkdownloads/datasets_E.xml")
+    xml_url <- "https://fenixservices.fao.org/faostat/static/bulkdownloads/datasets_E.xml"
+    # Temporary copy of the xml metadata file, valid for this R session
+    xml_temp_file <- file.path(tempdir(), "datasets_E.xml")
+    if (!file.exists(xml_temp_file)){
+        print("Downloading information on datasets and links to individual bulk download files.")
+        download.file(xml_url, xml_temp_file)
+    }
+    FAOxml <- XML::xmlParse(xml_temp_file)
     metadata <- XML::xmlToDataFrame(FAOxml, stringsAsFactors = FALSE)
 
     # Rename columns to lowercase
@@ -34,6 +40,9 @@ FAOsearch = function(code = NULL, dataset = NULL, topic = NULL, latest = FALSE, 
         metadata <- metadata[grep(topic, metadata[,"topic"], ignore.case = TRUE),]}
     if(latest == TRUE){
         metadata <- metadata[order(metadata$DateUpdate, decreasing = TRUE),]}
+    if(nrow(metadata) == 0L){
+        stop("The metadata is empty for your query. Try loading FAOsearch() to see the full metadata.")
+    }
     if(full == FALSE){
         return(metadata[,c("datasetcode", "datasetname", "dateupdate")])}
     if(full == TRUE){

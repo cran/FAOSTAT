@@ -6,7 +6,7 @@
 ##' Missing values are ommited in the regression. (Will need to check
 ##' this.)
 ##'
-##' TODO (Michael): There is still some error associated with this
+##' WONTFIX (Michael): There is still some error associated with this
 ##' function, will need to investigate further. Will need a rule for
 ##' this, when the fluctuation is large and data are sufficient then
 ##' take the lsgr, otherwise the geogr.

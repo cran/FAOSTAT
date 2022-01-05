@@ -1,5 +1,5 @@
 #' @title Download bulk data from the faostat website
-#' http://www.fao.org/faostat/en/#data
+#' https://www.fao.org/faostat/en/#data
 #'
 #' @description 
 #' \itemize{
@@ -15,10 +15,10 @@
 #' The other functions are lower level functions that you can use as an alternative. 
 #' You can also explore the datasets and find their download URLs
 #' on the FAOSTAT website. Explore the website to find out the data you are interested in
-#' \url{http://www.fao.org/faostat/en/#data}
+#' \url{https://www.fao.org/faostat/en/#data}
 #' Copy a "bulk download" url, 
 #' for example they are located in the right menu on the "crops" page
-#' \url{http://www.fao.org/faostat/en/#data/QC}
+#' \url{https://www.fao.org/faostat/en/#data/QC}
 #' Note that faostat bulk files with names ending with "normalized" are in long format 
 #' with a year column instead of one column for each year.
 #' The long format is preferable for data analysis and this is the format 
@@ -34,12 +34,12 @@
 #' dir.create(data_folder)
 #' 
 #' # Load crop production data
-#' production_crops <- get_faostat_bulk(code = "QC", data_folder = data_folder)
+#' crop_production <- get_faostat_bulk(code = "QCL", data_folder = data_folder)
 #' 
 #' # Cache the file i.e. save the data frame in the serialized RDS format for faster load time later.
-#' saveRDS(production_crops, "data_raw/production_crops_e_all_data.rds")
+#' saveRDS(crop_production, "data_raw/crop_production_e_all_data.rds")
 #' # Now you can load your local version of the data from the RDS file
-#' production_crops <- readRDS("data_raw/production_crops_e_all_data.rds")
+#' crop_production <- readRDS("data_raw/crop_production_e_all_data.rds")
 #'
 #'
 #' # Use the lower level functions to download zip files, 
@@ -48,19 +48,19 @@
 #' # the url is split in two parts: a common part 'url_bulk_site' and a .zip file name part.
 #' # In practice you can enter the full url directly as the `url_bulk`  argument.
 #' # Notice also that I have choosen to load global data in long format (normalized).
-#' url_bulk_site <- "http://fenixservices.fao.org/faostat/static/bulkdownloads"
-#' url_crops <- file.path(url_bulk_site, "production_crops_E_All_Data_(Normalized).zip")
+#' url_bulk_site <- "https://fenixservices.fao.org/faostat/static/bulkdownloads"
+#' url_crops <- file.path(url_bulk_site, "crop_production_E_All_Data_(Normalized).zip")
 #' url_forestry <- file.path(url_bulk_site, "Forestry_E_All_Data_(Normalized).zip")
 #' # Download the files
 #' download_faostat_bulk(url_bulk = url_forestry, data_folder = data_folder)
 #' download_faostat_bulk(url_bulk = url_crops, data_folder = data_folder)
 #' 
 #' # Read the files and assign them to data frames 
-#' production_crops <- read_faostat_bulk("data_raw/production_crops_E_All_Data_(Normalized).zip")
+#' crop_production <- read_faostat_bulk("data_raw/crop_production_E_All_Data_(Normalized).zip")
 #' forestry <- read_faostat_bulk("data_raw/Forestry_E_All_Data_(Normalized).zip")
 #'  
 #' # Save the data frame in the serialized RDS format for fast reuse later.
-#' saveRDS(production_crops, "data_raw/production_crops_e_all_data.rds")
+#' saveRDS(crop_production, "data_raw/crop_production_e_all_data.rds")
 #' saveRDS(forestry,"data_raw/forestry_e_all_data.rds")
 #' }
 #' @export
@@ -71,17 +71,31 @@ download_faostat_bulk <- function(url_bulk, data_folder){
 
 #' @rdname download_faostat_bulk
 #' @param zip_file_name character name of the zip file to read
-#' @return data frame of FAOSTAT data 
+#' @param encoding parameter passed to `read.csv`.
+#' @param rename_element boolean Rename the element column to snake case. To
+#' facilitate the use of elements as column names later when the data frame
+#' gets reshaped to a wider format. Replace non alphanumeric characters by
+#' underscores.
+#' @return data frame of FAOSTAT data
 #' @export
-read_faostat_bulk <- function(zip_file_name){
+read_faostat_bulk <- function(zip_file_name, 
+                              encoding="latin1", 
+                              rename_element=TRUE){
     # The main csv file shares the name of the archive
     csv_file_name <- gsub(".zip$",".csv", basename(zip_file_name))
     # Read the csv file within the zip file
-    df <- read.csv(unz(zip_file_name, csv_file_name), stringsAsFactors = FALSE)
-    # Rename columns to lowercase
-    names(df) <- tolower(gsub("\\.","_",names(df)))
+    df <- read.csv(unz(zip_file_name, csv_file_name),
+                   stringsAsFactors = FALSE,
+                   encoding=encoding)
+    # Rename columns to lower case 
+    # and replace non alphanumeric characters by underscores.
+    names(df) <- gsub("[^[:alnum:]]", "_", tolower(names(df)))
+    if(rename_element){
+        df$element <- gsub("[^[:alnum:]]","_",tolower(df$element))
+    }
     return(df)
 }
+
 
 #' @rdname download_faostat_bulk
 #' @param code character dataset code

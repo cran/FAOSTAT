@@ -32,14 +32,14 @@ options(replace.assign=TRUE,width=80)
 #  FAOsearch(dataset="crop", full = FALSE)
 #  
 #  # Load crop production data
-#  production_crops <- get_faostat_bulk(code = "QC", data_folder = data_folder)
+#  crop_production <- get_faostat_bulk(code = "QCL", data_folder = data_folder)
 #  # Show the structure of the data
 #  str(crop_production)
 #  
 #  # Cache the file i.e. save the data frame in the serialized RDS format for fast reuse later.
-#  saveRDS(production_crops, "data_raw/production_crops_e_all_data.rds")
+#  saveRDS(crop_production, "data_raw/crop_production_e_all_data.rds")
 #  # Now you can load your local version of the data from the RDS file
-#  production_crops <- readRDS("data_raw/production_crops_e_all_data.rds")
+#  crop_production <- readRDS("data_raw/crop_production_e_all_data.rds")
 
 ## ----FAO-check, eval=FALSE----------------------------------------------------
 #  FAOchecked.df = FAOcheck(var = FAOquery.df$varName, year = "Year",

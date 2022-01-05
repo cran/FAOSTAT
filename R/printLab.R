@@ -10,7 +10,7 @@
 ##' @export
 ##' @return The formatted print
 
-## TODO (Michael): Need to wrap the label
+## WONTFIX (Michael): Need to wrap the label
 printLab = function(label, span = FALSE, width = getOption("width")){
   nc = nchar(label)
   sides = (width - nc)/2 - 3
