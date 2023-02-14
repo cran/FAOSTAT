@@ -90,7 +90,7 @@ read_faostat_bulk <- function(zip_file_name,
     # Rename columns to lower case 
     # and replace non alphanumeric characters by underscores.
     names(df) <- gsub("[^[:alnum:]]", "_", tolower(names(df)))
-    if(rename_element){
+    if(rename_element & "element" %in% names(df)){
         df$element <- gsub("[^[:alnum:]]","_",tolower(df$element))
     }
     return(df)

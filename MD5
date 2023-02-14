@@ -1,4 +1,4 @@
-587ff8ea513037cafe93126d6ced81ba *DESCRIPTION
+249b159adcf9696dae8aa6242550dfa0 *DESCRIPTION
 52874fee742d0b7c1c8728a10fde3026 *NAMESPACE
 be83f5070c20f2363ba3c138b45c90e0 *R/Aggregation.R
 8e87389a02f46129380aabb302ee0055 *R/CHMT.R
@@ -12,7 +12,7 @@ ea56a7e023e152f6f534ec842ec9cd52 *R/FAOsearch.R
 0911be25d0cbcb57496f62c42f8c10c1 *R/chgr.R
 89c2dcbf429d07bd7e27664836734af0 *R/constructSYB.R
 bd20625c590b7a508e343c8746812926 *R/ebind.R
-774fbd9621557f1f9d0695e7e3ce8622 *R/faostat_bulk_download.R
+70f60985aac58dc0f5c2a5c243f810c2 *R/faostat_bulk_download.R
 21b77fd456899d9ab79682371f7db29b *R/fillCountryCode.R
 1877c4734485511282e67f4ed20af82b *R/geogr.R
 abb335c9fabe8b544601aa4194689bb9 *R/getFAO.R
@@ -30,15 +30,15 @@ f261fae5f6c27e626b93032ace09401b *R/scaleUnit.R
 7d1483987edffe5b6d5661ab576a1aff *R/shConstruct.R
 a5fb6adf38b4c6b4f74338e0d7e263dc *R/translateCountryCode.R
 5ee6c43370896a38ddb75e53ca80f4a7 *R/translateUnit.R
-d05d79dbb585c0dc25fe115da4664ebc *build/vignette.rds
+b6f11e9d46f344aed45b94a0546397e7 *build/vignette.rds
 208409cb7b1e59ec4bf4fc9dfa2913ff *data/FAOcountryProfile.RData
 610cf755f5187718e393e1596aa32823 *data/FAOmetaTable.RData
 1903c712a468fd23c72297297b38bd28 *data/FAOregionProfile.RData
 d53d1cf2ddf1206bf39e24c8b05dc52a *demo/00Index
 b77337ef5d50ae773ddad1a469e6bdd5 *demo/FAOSTATdemo.R
-20275bd50eb974947978b301f2b9e7ad *inst/doc/FAOSTAT.R
-9a8fb43e1b6b67ae3c5fcca62f2f4814 *inst/doc/FAOSTAT.Rnw
-0e69ddba02f2cd6384e7a9b6abfdedab *inst/doc/FAOSTAT.pdf
+c8730cb62cba9277f7f930132c693c19 *inst/doc/FAOSTAT.R
+2bc2f5dc64617bdf02585b38127097da *inst/doc/FAOSTAT.Rnw
+4f64e6fc730520f9f60fc3ffb5f88c08 *inst/doc/FAOSTAT.pdf
 eba60c1871cbda35b4ff2524a30fcd5c *man/Aggregation.Rd
 43d33ac1c29fb746d05a08a2839c9455 *man/CHMT.Rd
 c00fd90a2464d05a83144c7125678cc8 *man/FAOSTAT-package.Rd
@@ -72,4 +72,4 @@ e429c82900d082be455dae98c308afbb *man/translateCountryCode.Rd
 29b45398272cb1097494cc866cb5294b *tests/testthat.R
 1dd27edf5f8929b277fb7bb29a42dcfb *tests/testthat/test_geogr.R
 a41434aa7a909201f055f44c9ac7e2bb *vignettes/FAOSTAT-concordance.tex
-9a8fb43e1b6b67ae3c5fcca62f2f4814 *vignettes/FAOSTAT.Rnw
+2bc2f5dc64617bdf02585b38127097da *vignettes/FAOSTAT.Rnw

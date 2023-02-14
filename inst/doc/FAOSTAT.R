@@ -19,7 +19,7 @@ options(replace.assign=TRUE,width=80)
 #  help(package = "FAOSTAT")
 #  vignette("FAOSTAT", package = "FAOSTAT")
 
-## ----FAO-search, eval=FALSE---------------------------------------------------
+## ----FAO-search1, eval=FALSE--------------------------------------------------
 #  library(FAOSTAT)
 #  # Create a folder to store the data
 #  data_folder <- "data_raw"
@@ -72,6 +72,18 @@ options(replace.assign=TRUE,width=80)
 
 ## ----merge, warning=TRUE,  eval=FALSE-----------------------------------------
 #  merged.df = mergeSYB(FAOchecked.df, WB.lst$entity, outCode = "FAOST_CODE")
+
+## ----FAO-search2, eval=FALSE--------------------------------------------------
+#  library(tidyr)
+#  # Reuse the data folder created above
+#  data_folder <- "data_raw"
+#  dir.create(data_folder)
+#  
+#  # Load food balance data
+#  fbs <- get_faostat_bulk("FBS", data_folder)
+#  
+#  # Reshape to wide format
+#  fbs_wide <- pivot_wider(fbs, names_from=year, values_from=value)
 
 ## ----Scale to basic unit, eval=FALSE------------------------------------------
 #  multipliers = data.frame(Variable = c("arableLand", "cerealExp", "cerealProd",

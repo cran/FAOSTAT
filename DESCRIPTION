@@ -1,8 +1,8 @@
 Package: FAOSTAT
 Type: Package
 Title: Download Data from the FAOSTAT Database
-Version: 2.2.3
-Date: 2022-01-05
+Version: 2.2.4
+Date: 2023-02-14
 Author: Michael C. J. Kao <michael.kao@fao.org>, Markus Gesmann, Filippo Gheri
 Maintainer: Paul Rougieux <paul.rougieux@gmail.com>
 Description: Download Data from the FAOSTAT Database of the Food and Agricultural Organization (FAO) of the United Nations.
@@ -19,8 +19,8 @@ LazyData: yes
 ZipData: no
 VignetteBuilder: knitr
 Suggests: knitr, testthat
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 NeedsCompilation: no
-Packaged: 2022-01-05 15:31:23 UTC; paul
+Packaged: 2023-02-14 09:05:22 UTC; paul
 Repository: CRAN
-Date/Publication: 2022-01-05 16:00:08 UTC
+Date/Publication: 2023-02-14 10:20:06 UTC

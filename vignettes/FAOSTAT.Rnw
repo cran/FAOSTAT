@@ -145,7 +145,7 @@ The metadata returned by \code{FAOsearch} describes more than seventy datasets. 
 Once you have found the dataset code you are interested in, enter it as the code argument to the \code{get_faostat_bulk()} function. 
 That function will load the corresponding data into a data frame as illustrated in the sample code below.
 
-<<FAO-search, eval=FALSE>>=
+<<FAO-search1, eval=FALSE>>=
 library(FAOSTAT)
 # Create a folder to store the data
 data_folder <- "data_raw"
@@ -189,7 +189,7 @@ In order to access to an indicator in FAOSTAT using the API, three pieces of inf
 
 The \code{getFAOtoSYB} is a wrapper for the \code{getFAO} to batch download data, it supports error recovery and stores the status of the download. The function also splits the data downloaded into entity level and regional aggregates, saving time for the user. Query results from \code{FAOsearch} can also be used.
 
-In some cases multiple China are provided. In the FAOSTAT database for example, the trade domain provides data on China mainland (faostat country code = 41), Taiwan (faostat country code =  214) and China plus Taiwan (faostat country code = 357). In some other datasets it is also possible to find China plus Taiwan plus Macao plus Hong Kong (faostat country code =  351). The \code{CHMT} function avoids double counting if multiple China are detected by removing the more aggregated entities if detected. The default in \code{getFAOtoSYB} is to use \code{CHMT} when possible. It is important to perform this check before the aggregation step in order to avoid duble counting. This means that not necessarely this operation needs to be done at the data collection stage. This can be done also at a later stage using the \code{FAOcheck} function (or the \code{CHMT} function directly).
+In some cases multiple China are provided. In the FAOSTAT database for example, the trade domain provides data on China mainland (faostat country code = 41), Taiwan (faostat country code =  214) and China plus Taiwan (faostat country code = 357). In some other datasets it is also possible to find China plus Taiwan plus Macao plus Hong Kong (faostat country code =  351). The \code{CHMT} function avoids double counting if multiple China are detected by removing the more aggregated entities if detected. The default in \code{getFAOtoSYB} is to use \code{CHMT} when possible. It is important to perform this check before the aggregation step in order to avoid double counting. This means that not necessarily this operation needs to be done at the data collection stage. This can be done also at a later stage using the \code{FAOcheck} function (or the \code{CHMT} function directly).
 
 <<FAO-check, eval=FALSE>>=
 FAOchecked.df = FAOcheck(var = FAOquery.df$varName, year = "Year", 
@@ -281,6 +281,38 @@ Given the lack of an internationally recognized standard which incorporates all 
 <<merge, warning=TRUE,  eval=FALSE>>=
 merged.df = mergeSYB(FAOchecked.df, WB.lst$entity, outCode = "FAOST_CODE")
 @
+
+\section{Reshape data to the wide "non normalized" format}
+
+The dataset locations returned by `FAOsearch()` point to the "normalized"
+version of the data, compatible with the tidy data mindset. The "normalized"
+data format is a long format, better for analysis in the tidy-data mindset as
+described by Hadley Wickham in \url{https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html}.
+
+\quotation{
+In tidy data:
+\begin{itemize}
+	\item: Every column is a variable.
+	\item: Every row is an observation.
+    \item: Every cell is a single value.
+\end{itemize}
+}
+
+In case you want the data in long format, you can reshape it with:
+
+<<FAO-search2, eval=FALSE>>=
+library(tidyr)
+# Reuse the data folder created above
+data_folder <- "data_raw"
+dir.create(data_folder)
+
+# Load food balance data
+fbs <- get_faostat_bulk("FBS", data_folder)
+
+# Reshape to wide format
+fbs_wide <- pivot_wider(fbs, names_from=year, values_from=value)
+@
+
 
 \section{Scale data to basic unit}
 
