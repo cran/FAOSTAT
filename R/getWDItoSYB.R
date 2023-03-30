@@ -23,8 +23,7 @@
 ##' }
 ##' @export
 ##'
-##' @seealso \code{\link{getWDI}}, \code{\link{getFAO}},
-##' \code{\link{getFAOtoSYB}}
+##' @seealso \code{\link{getWDI}}, \code{\link{getFAO}}
 ##' @examples
 ##' ## pop.df = getWDItoSYB(name = "total_population",
 ##' ##                      indicator = "SP.POP.TOTL")

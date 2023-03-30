@@ -51,7 +51,7 @@ Also available at
 ## pop.df = getWDI()
 }
 \seealso{
-\code{\link{getFAO}}, \code{\link{getWDItoSYB}},
-\code{\link{getFAOtoSYB}} 
+\code{\link{getFAO}}, \code{\link{getWDItoSYB}}
+
 and the WBI package \url{https://cran.r-project.org/package=WDI} for an implementation with many more features.
 }

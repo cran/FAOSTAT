@@ -3,9 +3,16 @@
 \docType{package}
 \name{FAOSTAT-package}
 \alias{FAOSTAT-package}
+\alias{.FAOSTATenv}
 \title{A complementary package to the FAOSTAT database and the
 Statistical Yearbook of the Food and Agricultural Organization of
 the United Nations.}
+\format{
+An object of class \code{environment} of length 0.
+}
+\usage{
+.FAOSTATenv
+}
 \description{
 A complementary package to the FAOSTAT database and the
 Statistical Yearbook of the Food and Agricultural Organization of

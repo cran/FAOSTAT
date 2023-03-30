@@ -9,7 +9,7 @@
 #'  More precisely it unzips the archive. 
 #'  Reads the main csv file within the archive.
 #'  The main file has the same name as the name of the archive. 
-#'  Note: the zip archive might also contain metadata files about Flags and Symboles.}
+#'  Note: the zip archive might also contain metadata files about Flags and Symbols.}
 #' }
 #' In general you should load the data with the function \code{get_faostat_bulk()} and a dataset code.
 #' The other functions are lower level functions that you can use as an alternative. 
@@ -64,7 +64,8 @@
 #' saveRDS(forestry,"data_raw/forestry_e_all_data.rds")
 #' }
 #' @export
-download_faostat_bulk <- function(url_bulk, data_folder){
+
+download_faostat_bulk <- function(url_bulk, data_folder = "."){
     file_name <- basename(url_bulk)
     download.file(url_bulk, file.path(data_folder, file_name))
 }
@@ -89,24 +90,50 @@ read_faostat_bulk <- function(zip_file_name,
                    encoding=encoding)
     # Rename columns to lower case 
     # and replace non alphanumeric characters by underscores.
-    names(df) <- gsub("[^[:alnum:]]", "_", tolower(names(df)))
+    names(df) <- to_snake(names(df))
     if(rename_element & "element" %in% names(df)){
-        df$element <- gsub("[^[:alnum:]]","_",tolower(df$element))
+        df$element <- to_snake(df$element)
     }
     return(df)
 }
 
 
 #' @rdname download_faostat_bulk
-#' @param code character dataset code
+#' @param code character. Dataset code
+#' @param subset character. Use \code{read_bulk_metadata}. Request all data,
+#'   normalised data or region
+#' @return data frame of FAOSTAT data
+#' @export
+get_faostat_bulk <- function(code, data_folder = tempdir(), subset = "All Data Normalized"){
+    
+    dir.create(data_folder, showWarnings = FALSE, recursive = TRUE)
+    
+    # Load information about the given dataset code 
+    metadata <- read_bulk_metadata(dataset_code = code)
+    
+    metadata_url = metadata[metadata$FileContent == subset, "URL"]
+    
+    # Use the result of the search to download the data and assign it to a data frame 
+    download_faostat_bulk(url_bulk = metadata_url, data_folder = data_folder)
+    output <- read_faostat_bulk(file.path(data_folder, basename(metadata_url)))
+    return(output)
+}
+
+#' @rdname download_faostat_bulk
+#' @param dataset_code character. Dataset code
 #' @return data frame of FAOSTAT data 
 #' @export
-get_faostat_bulk <- function(code, data_folder){
-    # Load information about the given dataset code 
-    metadata <- FAOsearch(code = code)
-    # Use the result of the search to download the data and assign it to a data frame 
-    download_faostat_bulk(url_bulk = metadata$filelocation, data_folder = data_folder)
-    output <- read_faostat_bulk(file.path(data_folder, basename(metadata$filelocation)))
-    return(output)
+
+read_bulk_metadata <- function(dataset_code){
+    metadata_req <- get_fao(paste0("/bulkdownloads/", dataset_code))
+    metadata <- content(metadata_req)
+    
+    meta_metadata <- metadata$metadata
+    data <- metadata$data
+    out <- as.data.frame(rbindlist(lapply(data, as.data.table)))
+    
+    attr(out, "metadata") <- meta_metadata
+    
+    return(out)
 }
 

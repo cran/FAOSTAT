@@ -25,8 +25,8 @@
 #' Also available at 
 #' \url{https://www.magesblog.com/post/2011-09-25-accessing-and-plotting-world-bank-data/}
 #'
-#' @seealso \code{\link{getFAO}}, \code{\link{getWDItoSYB}},
-#' \code{\link{getFAOtoSYB}} 
+#' @seealso \code{\link{getFAO}}, \code{\link{getWDItoSYB}}
+#' 
 #' and the WBI package \url{https://cran.r-project.org/package=WDI} for an implementation with many more features.
 #' @examples
 #' ## pop.df = getWDI()

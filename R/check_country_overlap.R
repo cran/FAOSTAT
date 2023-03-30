@@ -13,18 +13,24 @@
 ##'
 ##' @export
 ##' @examples
-##' ## test.df = 
-##' ##    data.frame(FAOST_CODE = rep(c(51,167,199), each = 3), 
-##' ##      Year = rep(c(1990:1992), 3),
-##' ##      Value = c(c(3,4,4), c(2,2,2), c(1,2,NA)))
-##' ## FAOcheck(var = "Value", data = test.df, type = "overlap", take = "simpleCheck")
-##' ## FAOcheck(var = "Value", data = test.df, type = "overlap", take = "takeNew")
-##' ## FAOcheck(var = "Value", data = test.df, type = "overlap", take = "takeOld")
-##' ## FAOcheck(var = "Value", data = test.df, type = "overlap", take = "complete")
+##' test.df = 
+##'    data.frame(FAOST_CODE = rep(c(51,167,199), each = 3), 
+##'   Year = rep(c(1990:1992), 3),
+##'   Value = c(c(3,4,4), c(2,2,2), c(1,2,NA)))
+##' check_country_overlap(var = "Value", data = test.df, type = "overlap", take = "simpleCheck")
+##' check_country_overlap(var = "Value", data = test.df, type = "overlap", take = "takeNew")
+##' check_country_overlap(var = "Value", data = test.df, type = "overlap", take = "takeOld")
+##' check_country_overlap(var = "Value", data = test.df, type = "overlap", take = "complete")
 
-FAOcheck = function(var, year = "Year", data, 
+check_country_overlap = function(var, year = "Year", data, 
                     type = c("overlap", "multiChina"),
                     take = c("simpleCheck", "takeNew", "takeOld", "complete")){
+    
+    if (deparse(match.call()[[1]]) == "FAOcheck") {
+        .Deprecated("check_country_overlap", msg = "FAOcheck has deprecated been replaced by check_country_overlap as the old API doesn't work anymore. 
+                check_country_overlap was called instead")
+    }
+    
     type = match.arg(type)
     take = match.arg(take)
     if(type == "overlap"){
@@ -74,7 +80,7 @@ FAOcheck = function(var, year = "Year", data,
         ## Northern Mariana Islands, Palau (new entities, from 1991).
         data = overlap(old = 164, new = c(145,127,163,180), 
                        var = var, data = data, take = take)
-        cat("\nNOTE: It is common for data reported by the predecessor\n or the new transitional country to include the new country\n")
+        message("NOTE: It is common for data reported by the predecessor\n or the new transitional country to include the new country\n")
     }
     if(type == "multiChina"){
         printLab("Check for existence of multiple China")
@@ -84,3 +90,4 @@ FAOcheck = function(var, year = "Year", data,
 }
 
 
+FAOcheck <- check_country_overlap

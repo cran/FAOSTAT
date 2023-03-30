@@ -15,7 +15,10 @@
 ##' @import data.table
 ##' @import MASS
 ##' @import classInt
-##' @import ggplot2
 ##' @import labeling
+##' @import httr
 ##'
-NULL
+
+.FAOSTATenv <- new.env()
+# Remove CHECK note due to non-standard evaluation in data.table
+utils::globalVariables(c("code", "label", "date_update"))

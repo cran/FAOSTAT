@@ -56,6 +56,5 @@ The function downloads data from the World Bank API.
 
 }
 \seealso{
-\code{\link{getWDI}}, \code{\link{getFAO}},
-\code{\link{getFAOtoSYB}}
+\code{\link{getWDI}}, \code{\link{getFAO}}
 }
