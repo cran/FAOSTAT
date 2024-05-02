@@ -2,23 +2,20 @@
 % Please edit documentation in R/FAOSTAT-package.R
 \docType{package}
 \name{FAOSTAT-package}
+\alias{FAOSTAT}
 \alias{FAOSTAT-package}
-\alias{.FAOSTATenv}
 \title{A complementary package to the FAOSTAT database and the
 Statistical Yearbook of the Food and Agricultural Organization of
 the United Nations.}
-\format{
-An object of class \code{environment} of length 0.
-}
-\usage{
-.FAOSTATenv
-}
 \description{
-A complementary package to the FAOSTAT database and the
-Statistical Yearbook of the Food and Agricultural Organization of
-the United Nations.
+Download Data from the FAOSTAT Database of the Food and Agricultural Organization (FAO) of the United Nations. A list of functions to download statistics from FAOSTAT (database of the FAO \url{https://www.fao.org/faostat/}) and WDI (database of the World Bank \url{https://data.worldbank.org/}), and to perform some harmonization operations.
 }
-\author{
-Michael. C. J. Kao \email{michael.kao@fao.org}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://gitlab.com/paulrougieux/faostatpackage}
+  \item Report bugs at \url{https://gitlab.com/paulrougieux/faostatpackage/-/issues}
+}
+
 }
 \keyword{package}

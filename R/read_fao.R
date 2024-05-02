@@ -34,7 +34,7 @@
 #' df = read_fao(area_codes = "106", element_codes = "5110", item_codes = "6620", 
 #' year_codes = 2010:2020)
 #'
-#' # Find which country codes are avaialble
+#' # Find which country codes are available
 #' metadata_area <- read_dimension_metadata("RL", "area")
 #' # Find which items are available
 #' metadata_item <- read_dimension_metadata("RL", "item")
