@@ -1,4 +1,4 @@
-9f9d6713b595f76a3846513508086e51 *DESCRIPTION
+177a39c009b2f394e3e5944c820906b1 *DESCRIPTION
 eaefe5c36741620fc7d3492b5c129a3f *NAMESPACE
 be83f5070c20f2363ba3c138b45c90e0 *R/Aggregation.R
 8e87389a02f46129380aabb302ee0055 *R/CHMT.R
@@ -26,7 +26,7 @@ c2b2d7dc73e5af8044f07f16857a2263 *R/grConstruct.R
 f2f9630f833d48d7aec7a951059f47a1 *R/printLab.R
 6fcb670b4ce40e4c98353ee538760d5b *R/read_dataset_dimension.R
 919172ef99bfb2ebca89330e979f8248 *R/read_fao.R
-c3cdb90cf1ae5e331027bc44bbe4f4aa *R/rest.R
+97e24101f7ef870b08d1c292d931d3ff *R/rest.R
 f261fae5f6c27e626b93032ace09401b *R/scaleUnit.R
 4f833e5129f24c7af7754a3fffee8c8b *R/search_dataset.R
 7d1483987edffe5b6d5661ab576a1aff *R/shConstruct.R
@@ -41,7 +41,7 @@ d53d1cf2ddf1206bf39e24c8b05dc52a *demo/00Index
 b77337ef5d50ae773ddad1a469e6bdd5 *demo/FAOSTATdemo.R
 c8730cb62cba9277f7f930132c693c19 *inst/doc/FAOSTAT.R
 2bc2f5dc64617bdf02585b38127097da *inst/doc/FAOSTAT.Rnw
-af51fd38e4b48fd0fd9651d0e01f6118 *inst/doc/FAOSTAT.pdf
+a33bcd7a9dbf066eb066eb1f6948d5c4 *inst/doc/FAOSTAT.pdf
 eba60c1871cbda35b4ff2524a30fcd5c *man/Aggregation.Rd
 43d33ac1c29fb746d05a08a2839c9455 *man/CHMT.Rd
 8b4e2beef83bcf83e5bb495e17751a1c *man/FAOSTAT-package.Rd
@@ -61,7 +61,7 @@ b05c60c6e1eaca6445423d050b6cb5a8 *man/geogr.Rd
 ffef52c62d68f823556248206d3eabaa *man/getWDI.Rd
 06e0435682e0bf7881161ba9e42b714f *man/getWDImetaData.Rd
 6422ea8c196335f82ad6b7a5d22ff577 *man/getWDItoSYB.Rd
-ac4de458733cc0e058b2cb5b48ade638 *man/get_fao.Rd
+f77fb507330ad15dc1dc2d9e8788f908 *man/get_fao.Rd
 6148f74e696959fa1f4c42630becc8f3 *man/grConstruct.Rd
 c3fd3d70856a85becb44289e3f3b7d56 *man/indConstruct.Rd
 11cb7fb68c836286f82732f3ebbe3f18 *man/lsgr.Rd

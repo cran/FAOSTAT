@@ -8,8 +8,8 @@
 #' @keywords internal
 #' 
 
-get_fao <- function(endpoint, params = list(), language = c("en", "fr", "es"), base_url = "https://fenixservices.fao.org/faostat/api/v1"){
-  
+get_fao <- function(endpoint, params = list(), language = c("en", "fr", "es", "NA"), base_url = "https://faostatservices.fao.org/api/v1"){
+
   language = match.arg(language, several.ok = FALSE)
   
   resp <- GET(paste(base_url, language, endpoint, sep = "/"), query = params)

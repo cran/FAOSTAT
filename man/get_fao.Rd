@@ -7,8 +7,8 @@
 get_fao(
   endpoint,
   params = list(),
-  language = c("en", "fr", "es"),
-  base_url = "https://fenixservices.fao.org/faostat/api/v1"
+  language = c("en", "fr", "es", "NA"),
+  base_url = "https://faostatservices.fao.org/api/v1"
 )
 }
 \arguments{
