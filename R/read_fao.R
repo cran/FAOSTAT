@@ -95,7 +95,7 @@ read_fao <- function(area_codes, element_codes, item_codes, year_codes,
     # no_records = return_n_records_only,  # Used to only return the number of records
     # page_number = 1,   # For pagination
     # page_size = 100,   # Number of records for pagination
-    datasource = "DB4",
+    datasource = "PRODUCTION",
     output_type = "csv" #objects returns a json object
     #latest_year = 1 # Will give the latest year available
   )

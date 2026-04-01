@@ -15,12 +15,12 @@ change_case(
 
 \item{new_case}{character. Choice of new names:
 \itemize{
-\item make_names - (default) use the \link{make.names} function in R to sanitise names
+\item make_names - (default) use the \link[base:make.names]{base::make.names} function in R to sanitise names
 \item unsanitised/unsanitized - Return names as they are
 \item snake_case - Names are converted to lowercase and separators are replaced with underscores
 }}
 
-\item{...}{extra arguments to pass to sanitisation function (only works for \link{make.names})}
+\item{...}{extra arguments to pass to sanitisation function (only works for \link[base:make.names]{base::make.names})}
 }
 \description{
 Columns from FAOSTAT frequently have parentheses and other non-alphanumeric

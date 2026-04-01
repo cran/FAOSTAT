@@ -8,10 +8,10 @@
 #'
 #' @param old_names character. Vector of the names to be changed
 #' @param new_case character. Choice of new names:
-#' * make_names - (default) use the [make.names] function in R to sanitise names
+#' * make_names - (default) use the [base::make.names] function in R to sanitise names
 #' * unsanitised/unsanitized - Return names as they are
 #' * snake_case - Names are converted to lowercase and separators are replaced with underscores
-#' @param ... extra arguments to pass to sanitisation function (only works for [make.names])
+#' @param ... extra arguments to pass to sanitisation function (only works for [base::make.names])
 #'
 #' @export
 

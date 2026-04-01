@@ -1,48 +1,56 @@
 #' @title Download bulk data from the faostat website
 #' https://www.fao.org/faostat/en/#data
 #'
-#' @description 
+#' @description
 #' \itemize{
-#'  \item \code{get_faostat_bulk()} loads the given data set code and returns a data frame.
+#'  \item \code{get_faostat_bulk()} alias of \code{get_faostat_bulk_api()}, kept for backward compatibility.
+#'  \item \code{get_faostat_bulk_api()} loads the given data set code via the API and returns a data frame.
+#'  \item \code{get_faostat_bulk_url()} downloads a bulk zip file from a URL and reads it into a data frame in one step.
 #'  \item \code{download_faostat_bulk()} loads data from the given url and saves it to a compressed zip file.
 #'  \item \code{read_faostat_bulk()} Reads the compressed .csv .zip file into a data frame.
-#'  More precisely it unzips the archive. 
+#'  More precisely it unzips the archive.
 #'  Reads the main csv file within the archive.
-#'  The main file has the same name as the name of the archive. 
+#'  The main file has the same name as the name of the archive.
 #'  Note: the zip archive might also contain metadata files about Flags and Symbols.
 #' }
-#' In general you should load the data with the function \code{get_faostat_bulk()} and a dataset code.
-#' The other functions are lower level functions that you can use as an alternative. 
+#' In general you should load the data with the function \code{get_faostat_bulk_api()} and a dataset code.
+#' The other functions are lower level functions that you can use as an alternative.
 #' You can also explore the datasets and find their download URLs
 #' on the FAOSTAT website. Explore the website to find out the data you are interested in
 #' \url{https://www.fao.org/faostat/en/#data}
-#' Copy a "bulk download" url, 
+#' Copy a "bulk download" url,
 #' for example they are located in the right menu on the "crops" page
 #' \url{https://www.fao.org/faostat/en/#data/QC}
-#' Note that faostat bulk files with names ending with "normalized" are in long format 
+#' Note that faostat bulk files with names ending with "normalized" are in long format
 #' with a year column instead of one column for each year.
-#' The long format is preferable for data analysis and this is the format 
-#' returned by the  \code{get_faostat_bulk()} function. 
+#' The long format is preferable for data analysis and this is the format
+#' returned by the  \code{get_faostat_bulk_api()} function.
 #' @author Paul Rougieux
 #' @param url_bulk character url of the faostat bulk zip file to download
 #' @param data_folder character path of the local folder where to download the data
-#' @examples 
+#' @examples
 #' \dontrun{
 #'
 #' # Create a folder to store the data
 #' data_folder <- "data_raw"
 #' dir.create(data_folder)
-#' 
-#' # Load crop production data
-#' crop_production <- get_faostat_bulk(code = "QCL", data_folder = data_folder)
-#' 
+#'
+#' # Load crop production data via the API
+#' crop_production <- get_faostat_bulk_api(code = "QCL", data_folder = data_folder)
+#'
 #' # Cache the file i.e. save the data frame in the serialized RDS format for faster load time later.
 #' saveRDS(crop_production, "data_raw/crop_production_e_all_data.rds")
 #' # Now you can load your local version of the data from the RDS file
 #' crop_production <- readRDS("data_raw/crop_production_e_all_data.rds")
 #'
 #'
-#' # Use the lower level functions to download zip files, 
+#' # Download and read in one step using a direct URL
+#' df <- get_faostat_bulk_url(
+#'     "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_Oceania.zip",
+#'     data_folder = data_folder
+#' )
+#'
+#' # Use the lower level functions to download zip files,
 #' # then read the zip files in separate function calls.
 #' # In this example, to avoid a warning about "examples lines wider than 100 characters"
 #' # the url is split in two parts: a common part 'url_bulk_site' and a .zip file name part.
@@ -54,11 +62,11 @@
 #' # Download the files
 #' download_faostat_bulk(url_bulk = url_forestry, data_folder = data_folder)
 #' download_faostat_bulk(url_bulk = url_crops, data_folder = data_folder)
-#' 
-#' # Read the files and assign them to data frames 
+#'
+#' # Read the files and assign them to data frames
 #' crop_production <- read_faostat_bulk("data_raw/crop_production_E_All_Data_(Normalized).zip")
 #' forestry <- read_faostat_bulk("data_raw/Forestry_E_All_Data_(Normalized).zip")
-#'  
+#'
 #' # Save the data frame in the serialized RDS format for fast reuse later.
 #' saveRDS(crop_production, "data_raw/crop_production_e_all_data.rds")
 #' saveRDS(forestry,"data_raw/forestry_e_all_data.rds")
@@ -67,7 +75,21 @@
 
 download_faostat_bulk <- function(url_bulk, data_folder = "."){
     file_name <- basename(url_bulk)
-    download.file(url_bulk, file.path(data_folder, file_name))
+    dest_path <- file.path(data_folder, file_name)
+
+    if (!exists("access_token", envir = .FAOSTATenv)) {
+      faostat_login()
+    }
+    config <- add_headers(Authorization = paste("Bearer", .FAOSTATenv$access_token))
+
+    # Use httr::GET to download so we can include headers
+    resp <- GET(url_bulk, config, write_disk(dest_path, overwrite = TRUE), progress())
+
+    if (http_error(resp)) {
+      stop(sprintf("Failed to download file from %s. Status: %d", url_bulk, status_code(resp)))
+    }
+
+    return(dest_path)
 }
 
 #' @rdname download_faostat_bulk
@@ -79,8 +101,8 @@ download_faostat_bulk <- function(url_bulk, data_folder = "."){
 #' underscores.
 #' @return data frame of FAOSTAT data
 #' @export
-read_faostat_bulk <- function(zip_file_name, 
-                              encoding="latin1", 
+read_faostat_bulk <- function(zip_file_name,
+                              encoding="latin1",
                               rename_element=TRUE){
     # The main csv file shares the name of the archive
     csv_file_name <- gsub(".zip$",".csv", basename(zip_file_name))
@@ -88,7 +110,7 @@ read_faostat_bulk <- function(zip_file_name,
     df <- read.csv(unz(zip_file_name, csv_file_name),
                    stringsAsFactors = FALSE,
                    encoding=encoding)
-    # Rename columns to lower case 
+    # Rename columns to lower case
     # and replace non alphanumeric characters by underscores.
     names(df) <- to_snake(names(df))
     if(rename_element & "element" %in% names(df)){
@@ -99,41 +121,61 @@ read_faostat_bulk <- function(zip_file_name,
 
 
 #' @rdname download_faostat_bulk
+#' @export
+get_faostat_bulk_url <- function(url_bulk, data_folder = "."){
+    dir.create(data_folder, showWarnings = FALSE, recursive = TRUE)
+    file_name <- basename(url_bulk)
+    dest_path <- file.path(data_folder, file_name)
+    if (!file.exists(dest_path)) {
+        resp <- GET(url_bulk, write_disk(dest_path, overwrite = TRUE), progress())
+        if (http_error(resp)) {
+            stop(sprintf("Failed to download file from %s. Status: %d", url_bulk, status_code(resp)))
+        }
+    }
+    read_faostat_bulk(dest_path)
+}
+
+
+#' @rdname download_faostat_bulk
 #' @param code character. Dataset code
 #' @param subset character. Use \code{read_bulk_metadata}. Request all data,
 #'   normalised data or region
 #' @return data frame of FAOSTAT data
 #' @export
-get_faostat_bulk <- function(code, data_folder = tempdir(), subset = "All Data Normalized"){
-    
+get_faostat_bulk_api <- function(code, data_folder = tempdir(), subset = "All Data Normalized"){
+
     dir.create(data_folder, showWarnings = FALSE, recursive = TRUE)
-    
-    # Load information about the given dataset code 
+
+    # Load information about the given dataset code
     metadata <- read_bulk_metadata(dataset_code = code)
-    
+
     metadata_url = metadata[metadata$FileContent == subset, "URL"]
-    
-    # Use the result of the search to download the data and assign it to a data frame 
+
+    # Use the result of the search to download the data and assign it to a data frame
     download_faostat_bulk(url_bulk = metadata_url, data_folder = data_folder)
     output <- read_faostat_bulk(file.path(data_folder, basename(metadata_url)))
     return(output)
 }
 
 #' @rdname download_faostat_bulk
+#' @export
+get_faostat_bulk <- get_faostat_bulk_api
+
+#' @rdname download_faostat_bulk
 #' @param dataset_code character. Dataset code
-#' @return data frame of FAOSTAT data 
+#' @return data frame of FAOSTAT data
 #' @export
 
 read_bulk_metadata <- function(dataset_code){
     metadata_req <- get_fao(paste0("/bulkdownloads/", dataset_code))
     metadata <- content(metadata_req)
-    
+
     meta_metadata <- metadata$metadata
     data <- metadata$data
     out <- as.data.frame(rbindlist(lapply(data, as.data.table)))
-    
+
     attr(out, "metadata") <- meta_metadata
-    
+
     return(out)
 }
 

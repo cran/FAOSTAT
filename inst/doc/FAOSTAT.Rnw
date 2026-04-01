@@ -136,14 +136,39 @@ vignette("FAOSTAT", package = "FAOSTAT")
 \section{Data collection}
 \subsection{Download data from FAOSTAT}
 
-FAOSTAT is the largest agricultural database in the world. It contains data from land productivity to agricultural production and trade dating back from 1960 to the most recent available data. Detailed information on meta data, methods and standards can be found on the official website of FAOSTAT (\url{http://www.fao.org/faostat/en/#data}) and the Statistics Division (ESS) (\url{http://www.fao.org/economic/ess/en/}).
+FAOSTAT is the largest agricultural database in the world. It contains data from land productivity to agricultural production and trade dating back from 1960 to the most recent available data. Detailed information on meta data, methods and standards can be found on the official website of FAOSTAT (\url{https://www.fao.org/faostat/en/#data}) and the Statistics Division (ESS) (\url{https://www.fao.org/about/who-we-are/departments/statistics-division}).
 
-\subsubsection{Load data from the bulk download repository}
+There are 2 ways to access FAOSTAT data:
 
-A search function \code{FAOsearch} has been provided for the user to identify dataset codes. 
-The metadata returned by \code{FAOsearch} describes more than seventy datasets. Each dataset is identified by a 2 to 4 letter code. 
-Once you have found the dataset code you are interested in, enter it as the code argument to the \code{get_faostat_bulk()} function. 
-That function will load the corresponding data into a data frame as illustrated in the sample code below.
+\begin{enumerate}
+  \item Download bulk files with \code{get\_faostat\_bulk\_url} --- no login required.
+  \item Get fine-grained API data with \code{read\_fao}, or load data for all countries and all years with \code{get\_faostat\_bulk}.
+\end{enumerate}
+
+\subsubsection{1. Bulk files (no API key required)}
+
+Find out the URL of the bulk data normalized on the FAOSTAT page. For example, go to the land use page \url{https://www.fao.org/faostat/en/#data/RL}, look in the right column under ``Bulk Download'', right-click the link ``All Data Normalized'', and copy the link to the zip file. Then pass that URL as the \code{url\_bulk} argument:
+
+<<FAO-bulk-url, eval=FALSE>>=
+library(FAOSTAT)
+df <- get_faostat_bulk_url("https://bulks-faostat.fao.org/production/Inputs_LandUse_E_All_Data_(Normalized).zip",
+                            data_folder = "data_raw")
+@
+
+\subsubsection{2. API data (API key required)}
+
+First register at the developer portal \url{https://www.fao.org/faostat/en/#developer-portal}.
+
+Use \code{read\_fao()} to download data for a specific product in a specific country. On first use it will prompt for login and password, which triggers the storage of a temporary FAOSTAT token (valid 60 minutes):
+
+<<FAO-read-fao, eval=FALSE>>=
+# Get data for Cropland (6620) Area (5110) in Antigua and Barbuda (8) in 2017
+df = read_fao(area_codes = "8", element_codes = "5110", item_codes = "6620", year_codes = "2017")
+# Load cropland area for a range of years
+df = read_fao(area_codes = "106", element_codes = "5110", item_codes = "6620", year_codes = 2010:2020)
+@
+
+Use \code{get\_faostat\_bulk()} to download a full dataset for all countries. A search function \code{FAOsearch} has been provided to identify dataset codes; the metadata returned describes more than seventy datasets, each identified by a 2- to 4-letter code.
 
 <<FAO-search1, eval=FALSE>>=
 library(FAOSTAT)
@@ -151,10 +176,13 @@ library(FAOSTAT)
 data_folder <- "data_raw"
 dir.create(data_folder)
 
-# Load information about all datasets into a data frame
-fao_metadata <- FAOsearch()    
+# Login to the API -- creates an access token
+faostat_login()
 
-# Find information about datasets whose titles contain the word "crop" (illustrates the case insensitive search)
+# Load information about all datasets into a data frame
+fao_metadata <- FAOsearch()
+
+# Find datasets whose titles contain the word "crop"
 FAOsearch(dataset="crop", full = FALSE)
 
 # Load crop production data
@@ -162,9 +190,9 @@ crop_production <- get_faostat_bulk(code = "QCL", data_folder = data_folder)
 # Show the structure of the data
 str(crop_production)
 
-# Cache the file i.e. save the data frame in the serialized RDS format for fast reuse later.
+# Cache the file in the serialized RDS format for fast reuse later.
 saveRDS(crop_production, "data_raw/crop_production_e_all_data.rds")
-# Now you can load your local version of the data from the RDS file
+# Load your local version of the data from the RDS file
 crop_production <- readRDS("data_raw/crop_production_e_all_data.rds")
 @
 
@@ -199,7 +227,7 @@ FAOchecked.df = FAOcheck(var = FAOquery.df$varName, year = "Year",
 
 \subsection{Download data from World Bank}
 
-The World Bank also provides an API where data from the World Bank and various international organization are made public. More information about the data and the API can be found at \url{http://data.worldbank.org/}
+The World Bank also provides an API where data from the World Bank and various international organization are made public. More information about the data and the API can be found at \url{https://data.worldbank.org/}
 
 The authors are aware of the \pkg{WDI} package, but we have wrote this function before the recent update of the package with additional functionalities. We have plans to integrate with the \pkg{WDI} package to avoid confusion for the users.
 
@@ -222,16 +250,16 @@ Merge is a typical data manipulation step in daily work yet a non-trivial exerci
 
 \begin{itemize}
   \item United Nations M49 country standard [UN\_CODE]\\
-    \url{https://unstats.un.org/unsd/methods/m49/m49.htm/}
+    \url{https://unstats.un.org/unsd/methodology/m49/}
   \item FAO country code scheme [FAOST\_CODE]\\
-    \url{https://termportal.fao.org/faonocs/appl/}
+    \url{https://www.fao.org/faostat/en/#data}
   \item FAO Global Administrative Unit Layers (GAUL).[ADM0\_CODE]
   \item ISO 3166-1 alpha-2 [ISO2\_CODE]\\
     \url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}
   \item ISO 3166-1 alpha-2 (World Bank) [ISO2\_WB\_CODE]\\
     \url{https://data.worldbank.org/}
   \item ISO 3166-1 alpha-3 [ISO3\_CODE]\\
-    \url{http://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-3}
+    \url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-3}
   \item ISO 3166-1 alpha-3 (World Bank) [ISO3\_WB\_CODE]\\
     \url{https://data.worldbank.org/}
 \end{itemize}
@@ -287,7 +315,7 @@ merged.df = mergeSYB(FAOchecked.df, WB.lst$entity, outCode = "FAOST_CODE")
 The dataset locations returned by `FAOsearch()` point to the "normalized"
 version of the data, compatible with the tidy data mindset. The "normalized"
 data format is a long format, better for analysis in the tidy-data mindset as
-described by Hadley Wickham in \url{https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html}.
+described by Hadley Wickham in \url{https://CRAN.R-project.org/package=tidyr/vignettes/tidy-data.html}.
 
 \quotation{
 In tidy data:

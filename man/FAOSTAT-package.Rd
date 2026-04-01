@@ -18,4 +18,16 @@ Useful links:
 }
 
 }
+\author{
+\strong{Maintainer}: Paul Rougieux \email{paul.rougieux@gmail.com}
+
+Authors:
+\itemize{
+  \item Michael C. J.
+  \item Markus Gesmann
+  \item Filippo Gheri
+  \item Sebastian Campbell
+}
+
+}
 \keyword{package}
